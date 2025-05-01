@@ -50,12 +50,12 @@ export default function Home() {
                 <p className="text-xl sm:text-2xl text-foreground font-medium mb-8 leading-relaxed font-nunito">
                   Magic Story Buddy helps kids build their own bedtime stories – one choice at a time.
                 </p>
-                
+
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <a 
+          <a
                     href="/dashboard" 
                     className="rounded-full bg-indigo-700 py-4 px-6 text-white font-medium text-lg flex items-center justify-center gap-2 hover:bg-indigo-800 transition shadow-md sparkle-button font-poppins"
-                  >
+          >
                     <span className="text-yellow-200">⭐</span> Try a Demo Story
           </a>
           <a
@@ -190,7 +190,7 @@ export default function Home() {
                 </a>
                 <a href="/auth/signup" className="sparkle-button rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-accent text-accent-foreground hover:opacity-90 font-medium text-lg h-14 px-10 min-w-40 font-poppins">
                   Sign Up
-                </a>
+        </a>
               </div>
               
               <div className="mt-8 w-full max-w-md">
@@ -217,7 +217,7 @@ export default function Home() {
                 <a 
                   href="/download" 
                   className="sparkle-button flex items-center justify-center gap-4 px-8 py-4 bg-blue-100/80 hover:bg-blue-100 text-gray-800 rounded-full transition-colors sm:min-w-72 font-poppins"
-                >
+        >
                   <span className="text-3xl">🍎</span>
                   <div className="flex flex-col items-start">
                     <span className="text-sm">Download on the</span>
