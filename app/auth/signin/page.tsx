@@ -1,3 +1,5 @@
+'use client';
+
 import Link from "next/link";
 import Image from "next/image";
 import Logo from "../../components/Logo";
@@ -6,38 +8,38 @@ import WhimsicalBackground from "../../components/WhimsicalBackground";
 export default function SignIn() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <WhimsicalBackground starCount={12} cloudCount={3} className="min-h-screen">
+      <WhimsicalBackground className="min-h-screen">
         <div className="max-w-md w-full bg-card rounded-2xl shadow-lg p-8 reveal-on-scroll fade-in">
           <div className="flex flex-col gap-6">
             <div className="text-center">
-              <Logo size={56} className="mx-auto justify-center breathe" />
-              <h2 className="text-2xl font-semibold mb-2 mt-4">Sign In</h2>
-              <p className="text-muted-foreground">Welcome back to Magic Story Buddy</p>
+              <Logo size={60} className="mx-auto justify-center breathe" />
+              <h2 className="text-2xl font-semibold mb-2 mt-4 font-baloo">Sign In</h2>
+              <p className="text-muted-foreground font-nunito">Welcome back to Magic Story Buddy</p>
             </div>
 
             <form className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <label htmlFor="email" className="text-sm font-medium">
+                <label htmlFor="email" className="text-sm font-medium font-nunito">
                   Email
                 </label>
                 <input
                   id="email"
                   type="email"
                   placeholder="parent@example.com"
-                  className="h-12 rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="h-12 rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-nunito"
                   required
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <label htmlFor="password" className="text-sm font-medium">
+                <label htmlFor="password" className="text-sm font-medium font-nunito">
                   Password
                 </label>
                 <input
                   id="password"
                   type="password"
                   placeholder="••••••••"
-                  className="h-12 rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="h-12 rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-nunito"
                   required
                 />
               </div>
@@ -45,7 +47,7 @@ export default function SignIn() {
               <div className="text-right">
                 <Link
                   href="/auth/forgot-password"
-                  className="text-sm text-primary hover:underline"
+                  className="text-sm text-primary hover:underline font-poppins"
                 >
                   Forgot Password?
                 </Link>
@@ -53,7 +55,7 @@ export default function SignIn() {
 
               <button
                 type="submit"
-                className="sparkle-button h-12 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 mt-2"
+                className="sparkle-button h-12 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 mt-2 font-poppins"
               >
                 Sign In
               </button>
@@ -61,12 +63,12 @@ export default function SignIn() {
 
             <div className="flex items-center gap-2">
               <hr className="flex-1 border-t border-border" />
-              <span className="text-xs text-muted-foreground">OR CONTINUE WITH</span>
+              <span className="text-xs text-muted-foreground font-nunito">OR CONTINUE WITH</span>
               <hr className="flex-1 border-t border-border" />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <button className="sparkle-button h-12 rounded-lg border border-input bg-background hover:bg-muted flex items-center justify-center gap-2">
+              <button className="sparkle-button h-12 rounded-lg border border-input bg-background hover:bg-muted flex items-center justify-center gap-2 font-poppins">
                 <div className="w-5 h-5 flex items-center justify-center">
                   <svg viewBox="0 0 24 24" className="w-4 h-4">
                     <path
@@ -90,7 +92,7 @@ export default function SignIn() {
                 <span className="text-sm font-medium">Google</span>
               </button>
 
-              <button className="sparkle-button h-12 rounded-lg border border-input bg-background hover:bg-muted flex items-center justify-center gap-2">
+              <button className="sparkle-button h-12 rounded-lg border border-input bg-background hover:bg-muted flex items-center justify-center gap-2 font-poppins">
                 <div className="w-5 h-5 flex items-center justify-center text-[#1877F2]">
                   <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
                     <path d="M9.19795 21.5H13.198V13.4901H16.8021L17.198 9.50977H13.198V7.5C13.198 6.94772 13.6457 6.5 14.198 6.5H17.198V2.5H14.198C11.4365 2.5 9.19795 4.73858 9.19795 7.5V9.50977H7.19795L6.80206 13.4901H9.19795V21.5Z" />
@@ -101,9 +103,9 @@ export default function SignIn() {
             </div>
 
             <div className="text-center text-sm">
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground font-nunito">
                 Don't have an account?{" "}
-                <Link href="/auth/signup" className="text-primary hover:underline">
+                <Link href="/auth/signup" className="text-primary hover:underline font-poppins">
                   Sign Up
                 </Link>
               </p>

@@ -5,18 +5,24 @@ import Logo from "../components/Logo";
 export default function Help() {
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-card shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <header className="sticky top-0 z-50 bg-card shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
           <div className="flex justify-between items-center">
-            <Logo size={40} />
-            <div className="flex items-center gap-4">
-              <Link href="/dashboard" className="text-sm text-primary hover:underline">
+            <Logo size={28} showText={false} />
+            <nav className="flex items-center gap-4 text-xs">
+              <Link href="/" className="font-medium text-muted-foreground hover:text-primary">
+                Home
+              </Link>
+              <Link href="/dashboard" className="font-medium text-muted-foreground hover:text-primary">
                 Dashboard
               </Link>
-              <Link href="/settings" className="text-sm text-primary hover:underline">
-                Settings
+              <Link href="/stories" className="font-medium text-muted-foreground hover:text-primary">
+                Stories
               </Link>
-            </div>
+              <Link href="/help" className="font-medium text-primary hover:text-primary/80">
+                Help
+              </Link>
+            </nav>
           </div>
         </div>
       </header>

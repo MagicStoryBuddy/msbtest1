@@ -8,12 +8,12 @@ interface WhimsicalBackgroundProps {
 }
 
 export default function WhimsicalBackground({
-  starCount = 6,
-  cloudCount = 2,
+  starCount = 0,
+  cloudCount = 0,
   className = '',
   children
 }: WhimsicalBackgroundProps) {
-  // Generate random stars
+  // Generate random stars (if any are requested)
   const stars = Array.from({ length: starCount }).map((_, index) => {
     const size = Math.floor(Math.random() * 3) + 1;
     const top = Math.floor(Math.random() * 100);
@@ -38,7 +38,7 @@ export default function WhimsicalBackground({
     );
   });
 
-  // Generate random clouds
+  // Generate random clouds (if any are requested)
   const clouds = Array.from({ length: cloudCount }).map((_, index) => {
     const size = Math.floor(Math.random() * 2) + 1;
     const top = Math.floor(Math.random() * 90);
@@ -63,13 +63,17 @@ export default function WhimsicalBackground({
   });
 
   return (
-    <div className={`whimsical-bg ${className}`}>
-      <div className="star-sprinkle">
-        {stars}
-      </div>
-      <div className="cloud-overlay">
-        {clouds}
-      </div>
+    <div className={`whimsical-bg bg-gradient-to-b from-background to-background/80 ${className}`}>
+      {starCount > 0 && (
+        <div className="star-sprinkle">
+          {stars}
+        </div>
+      )}
+      {cloudCount > 0 && (
+        <div className="cloud-overlay">
+          {clouds}
+        </div>
+      )}
       {children}
     </div>
   );

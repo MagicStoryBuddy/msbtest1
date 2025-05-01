@@ -5,28 +5,30 @@ import WhimsicalBackground from "../components/WhimsicalBackground";
 export default function Dashboard() {
   return (
     <div className="min-h-screen bg-background">
-      <WhimsicalBackground starCount={8} cloudCount={3} className="min-h-screen">
-        <header className="bg-card shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex justify-between items-center">
-              <Logo size={40} />
-              <div className="flex items-center gap-4">
-                <Link href="/stories" className="text-sm text-primary hover:underline">
-                  Stories
-                </Link>
-                <span className="text-sm text-muted-foreground">Welcome, Parent</span>
-                <Link href="/settings" className="text-sm text-primary hover:underline">
-                  Settings
-                </Link>
-                <Link href="/help" className="text-sm text-primary hover:underline">
-                  Help
-                </Link>
-                <button className="text-sm text-primary hover:underline">Sign Out</button>
-              </div>
-            </div>
+      <header className="sticky top-0 z-50 bg-card shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+          <div className="flex justify-between items-center">
+            <Logo size={28} showText={false} />
+            <nav className="flex items-center gap-4 text-xs">
+              <Link href="/" className="font-medium text-muted-foreground hover:text-primary">
+                Home
+              </Link>
+              <Link href="/dashboard" className="font-medium text-primary hover:text-primary/80">
+                Dashboard
+              </Link>
+              <Link href="/stories" className="font-medium text-muted-foreground hover:text-primary">
+                Stories
+              </Link>
+              <Link href="/help" className="font-medium text-muted-foreground hover:text-primary">
+                Help
+              </Link>
+              <button className="font-medium text-muted-foreground hover:text-primary">Sign Out</button>
+            </nav>
           </div>
-        </header>
-
+        </div>
+      </header>
+      
+      <WhimsicalBackground className="min-h-[calc(100vh-40px)] overflow-visible">
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 cozy-py">
           <h2 className="text-3xl font-bold text-foreground mb-8 cozy-mb reveal-on-scroll fade-in">Parent Dashboard</h2>
 

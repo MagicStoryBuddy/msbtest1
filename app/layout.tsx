@@ -1,40 +1,50 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { Varela_Round } from "next/font/google";
+import { Baloo_2, Nunito, Poppins, Varela_Round } from "next/font/google";
 import "./globals.css";
 import ScrollAnimations from "./components/ScrollAnimations";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
+// Load fonts with proper subsets and display
 const varelaRound = Varela_Round({
-  variable: "--font-varela-round",
-  subsets: ["latin"],
   weight: ["400"],
+  subsets: ["latin"],
+  variable: "--font-varela-round",
+  display: "swap",
+});
+
+const baloo = Baloo_2({ 
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-baloo",
+  display: "swap",
+});
+
+const nunito = Nunito({ 
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-nunito",
+  display: "swap",
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: "Magic Story Buddy",
-  description: "A storytelling app for 3-5 year old children",
+  description: "Magical, personalized bedtime stories for kids ages 3–5",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${varelaRound.variable} antialiased`}
-      >
+    <html lang="en" className={`h-full ${baloo.variable} ${nunito.variable} ${poppins.variable} ${varelaRound.variable}`}>
+      <body className="font-nunito antialiased h-full">
         <ScrollAnimations />
         {children}
       </body>

@@ -1,48 +1,31 @@
+'use client';
+
 import Link from "next/link";
 import Logo from "../components/Logo";
 import WhimsicalBackground from "../components/WhimsicalBackground";
+import PageLayout from "../components/PageLayout";
 
 export default function Stories() {
   return (
-    <div className="min-h-screen bg-background">
-      <WhimsicalBackground starCount={10} cloudCount={4} className="min-h-screen">
-        <header className="bg-card shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex justify-between items-center">
-              <Logo size={40} />
-              <div className="flex items-center gap-4">
-                <Link href="/dashboard" className="text-sm text-primary hover:underline">
-                  Dashboard
-                </Link>
-                <Link href="/settings" className="text-sm text-primary hover:underline">
-                  Settings
-                </Link>
-                <Link href="/help" className="text-sm text-primary hover:underline">
-                  Help
-                </Link>
-                <button className="text-sm text-primary hover:underline">Sign Out</button>
-              </div>
-            </div>
-          </div>
-        </header>
-
+    <PageLayout currentPage="stories">
+      <WhimsicalBackground className="min-h-[calc(100vh-40px)] overflow-visible">
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 cozy-py">
           <div className="flex items-center justify-between mb-10 reveal-on-scroll fade-in">
             <div className="flex items-center gap-4">
               <div className="float-bubble relative" style={{ fontSize: '2rem' }}>📚</div>
-              <h2 className="text-3xl font-bold text-foreground">Mila's Stories</h2>
+              <h2 className="text-3xl font-bold text-foreground font-baloo">Mila's Stories</h2>
             </div>
             <div className="flex items-center gap-3">
               <select 
-                className="h-10 rounded-lg border border-input bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                className="h-10 rounded-lg border border-input bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary font-nunito"
                 defaultValue="mila"
               >
                 <option value="mila">Mila</option>
                 <option value="joe">Joe</option>
               </select>
-              <Link href="/dashboard" className="text-sm text-primary hover:underline">
+              <a href="/dashboard" className="text-sm text-primary hover:underline font-poppins">
                 Back to Dashboard
-              </Link>
+              </a>
             </div>
           </div>
 
@@ -311,6 +294,6 @@ export default function Stories() {
           </div>
         </main>
       </WhimsicalBackground>
-    </div>
+    </PageLayout>
   );
 } 

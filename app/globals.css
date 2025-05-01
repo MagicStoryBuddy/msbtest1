@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -6,8 +10,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-nunito);
+  --font-headline: var(--font-baloo);
+  --font-button: var(--font-poppins);
+  --font-mono: var(--font-mono);
   --font-rounded: var(--font-varela-round);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -44,81 +50,121 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-:root {
-  --radius: 0.625rem;
-  --background: oklch(0.98 0.03 120); /* Light pastel green background */
-  --foreground: oklch(0.2 0.02 280); /* Soft dark purple text for contrast */
-  --card: oklch(0.95 0.05 65); /* Soft pastel yellow */
-  --card-foreground: oklch(0.2 0.02 280); /* Matching text color */
-  --popover: oklch(0.95 0.05 65);
-  --popover-foreground: oklch(0.2 0.02 280);
-  --primary: oklch(0.7 0.12 320); /* Pastel pink */
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.85 0.08 200); /* Pastel blue */
-  --secondary-foreground: oklch(0.2 0.02 280);
-  --muted: oklch(0.9 0.04 180); /* Very light pastel teal */
-  --muted-foreground: oklch(0.4 0.03 280);
-  --accent: oklch(0.8 0.1 140); /* Pastel mint */
-  --accent-foreground: oklch(0.2 0.02 280);
-  --destructive: oklch(0.8 0.12 30); /* Soft orange instead of harsh red */
-  --border: oklch(0.8 0.08 200); /* Matching pastel blue border */
-  --input: oklch(0.95 0.03 120);
-  --ring: oklch(0.7 0.12 320); /* Matching pastel pink for focus rings */
-  --chart-1: oklch(0.85 0.12 320); /* Pastel pink */
-  --chart-2: oklch(0.85 0.11 200); /* Pastel blue */
-  --chart-3: oklch(0.85 0.12 65); /* Pastel yellow */
-  --chart-4: oklch(0.85 0.12 140); /* Pastel mint */
-  --chart-5: oklch(0.85 0.12 30); /* Pastel orange */
-  --sidebar: oklch(0.95 0.05 280); /* Light pastel purple */
-  --sidebar-foreground: oklch(0.2 0.02 280);
-  --sidebar-primary: oklch(0.7 0.12 320); /* Pastel pink */
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.85 0.08 200); /* Pastel blue */
-  --sidebar-accent-foreground: oklch(0.2 0.02 280);
-  --sidebar-border: oklch(0.8 0.08 200);
-  --sidebar-ring: oklch(0.7 0.12 320);
-}
-
-.dark {
-  --background: oklch(0.35 0.05 280); /* Soft dark purple background */
-  --foreground: oklch(0.95 0.03 65); /* Light pastel yellow for text */
-  --card: oklch(0.4 0.06 290); /* Slightly lighter purple card */
-  --card-foreground: oklch(0.95 0.03 65);
-  --popover: oklch(0.4 0.06 290);
-  --popover-foreground: oklch(0.95 0.03 65);
-  --primary: oklch(0.7 0.12 320); /* Pastel pink */
-  --primary-foreground: oklch(0.2 0.02 280);
-  --secondary: oklch(0.45 0.08 270); /* Darker pastel purple */
-  --secondary-foreground: oklch(0.95 0.03 65);
-  --muted: oklch(0.45 0.08 270);
-  --muted-foreground: oklch(0.8 0.1 320); /* Light pastel pink */
-  --accent: oklch(0.45 0.08 270);
-  --accent-foreground: oklch(0.95 0.03 65);
-  --destructive: oklch(0.75 0.14 30); /* Pastel orange */
-  --border: oklch(0.95 0.03 65 / 20%);
-  --input: oklch(0.95 0.03 65 / 20%);
-  --ring: oklch(0.75 0.12 320); /* Pastel pink */
-  --chart-1: oklch(0.75 0.12 320); /* Pastel pink */
-  --chart-2: oklch(0.7 0.11 200); /* Pastel blue */
-  --chart-3: oklch(0.75 0.12 65); /* Pastel yellow */
-  --chart-4: oklch(0.75 0.12 140); /* Pastel mint */
-  --chart-5: oklch(0.75 0.12 30); /* Pastel orange */
-  --sidebar: oklch(0.4 0.06 290);
-  --sidebar-foreground: oklch(0.95 0.03 65);
-  --sidebar-primary: oklch(0.7 0.12 320); /* Pastel pink */
-  --sidebar-primary-foreground: oklch(0.95 0.03 65);
-  --sidebar-accent: oklch(0.45 0.08 270);
-  --sidebar-accent-foreground: oklch(0.95 0.03 65);
-  --sidebar-border: oklch(0.95 0.03 65 / 20%);
-  --sidebar-ring: oklch(0.75 0.12 320);
-}
-
 @layer base {
+  :root {
+    --font-sans: var(--font-nunito);
+    --font-headline: var(--font-baloo);
+    --font-button: var(--font-poppins);
+    --font-rounded: var(--font-varela-round);
+
+    --radius: 0.625rem;
+    --background: oklch(0.98 0.03 120); /* Light pastel green background */
+    --foreground: oklch(0.2 0.02 280); /* Soft dark purple text for contrast */
+    --card: oklch(0.95 0.05 65); /* Soft pastel yellow */
+    --card-foreground: oklch(0.2 0.02 280); /* Matching text color */
+    --popover: oklch(0.95 0.05 65);
+    --popover-foreground: oklch(0.2 0.02 280);
+    --primary: oklch(0.7 0.12 320); /* Pastel pink */
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.85 0.08 200); /* Pastel blue */
+    --secondary-foreground: oklch(0.2 0.02 280);
+    --muted: oklch(0.9 0.04 180); /* Very light pastel teal */
+    --muted-foreground: oklch(0.4 0.03 280);
+    --accent: oklch(0.8 0.1 140); /* Pastel mint */
+    --accent-foreground: oklch(0.2 0.02 280);
+    --destructive: oklch(0.8 0.12 30); /* Soft orange instead of harsh red */
+    --border: oklch(0.8 0.08 200); /* Matching pastel blue border */
+    --input: oklch(0.95 0.03 120);
+    --ring: oklch(0.7 0.12 320); /* Matching pastel pink for focus rings */
+    --chart-1: oklch(0.85 0.12 320); /* Pastel pink */
+    --chart-2: oklch(0.85 0.11 200); /* Pastel blue */
+    --chart-3: oklch(0.85 0.12 65); /* Pastel yellow */
+    --chart-4: oklch(0.85 0.12 140); /* Pastel mint */
+    --chart-5: oklch(0.85 0.12 30); /* Pastel orange */
+    --sidebar: oklch(0.95 0.05 280); /* Light pastel purple */
+    --sidebar-foreground: oklch(0.2 0.02 280);
+    --sidebar-primary: oklch(0.7 0.12 320); /* Pastel pink */
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.85 0.08 200); /* Pastel blue */
+    --sidebar-accent-foreground: oklch(0.2 0.02 280);
+    --sidebar-border: oklch(0.8 0.08 200);
+    --sidebar-ring: oklch(0.7 0.12 320);
+  }
+  
+  .dark {
+    --background: oklch(0.35 0.05 280); /* Soft dark purple background */
+    --foreground: oklch(0.95 0.03 65); /* Light pastel yellow for text */
+    --card: oklch(0.4 0.06 290); /* Slightly lighter purple card */
+    --card-foreground: oklch(0.95 0.03 65);
+    --popover: oklch(0.4 0.06 290);
+    --popover-foreground: oklch(0.95 0.03 65);
+    --primary: oklch(0.7 0.12 320); /* Pastel pink */
+    --primary-foreground: oklch(0.2 0.02 280);
+    --secondary: oklch(0.45 0.08 270); /* Darker pastel purple */
+    --secondary-foreground: oklch(0.95 0.03 65);
+    --muted: oklch(0.45 0.08 270);
+    --muted-foreground: oklch(0.8 0.1 320); /* Light pastel pink */
+    --accent: oklch(0.45 0.08 270);
+    --accent-foreground: oklch(0.95 0.03 65);
+    --destructive: oklch(0.75 0.14 30); /* Pastel orange */
+    --border: oklch(0.95 0.03 65 / 20%);
+    --input: oklch(0.95 0.03 65 / 20%);
+    --ring: oklch(0.75 0.12 320); /* Pastel pink */
+    --chart-1: oklch(0.75 0.12 320); /* Pastel pink */
+    --chart-2: oklch(0.7 0.11 200); /* Pastel blue */
+    --chart-3: oklch(0.75 0.12 65); /* Pastel yellow */
+    --chart-4: oklch(0.75 0.12 140); /* Pastel mint */
+    --chart-5: oklch(0.75 0.12 30); /* Pastel orange */
+    --sidebar: oklch(0.4 0.06 290);
+    --sidebar-foreground: oklch(0.95 0.03 65);
+    --sidebar-primary: oklch(0.7 0.12 320); /* Pastel pink */
+    --sidebar-primary-foreground: oklch(0.95 0.03 65);
+    --sidebar-accent: oklch(0.45 0.08 270);
+    --sidebar-accent-foreground: oklch(0.95 0.03 65);
+    --sidebar-border: oklch(0.95 0.03 65 / 20%);
+    --sidebar-ring: oklch(0.75 0.12 320);
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Font utility classes */
+  .font-baloo {
+    font-family: var(--font-baloo);
+  }
+
+  .font-nunito {
+    font-family: var(--font-nunito);
+  }
+
+  .font-poppins {
+    font-family: var(--font-poppins);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-baloo);
+  }
+
+  button, 
+  .button,
+  a.button,
+  input[type="button"],
+  input[type="submit"] {
+    font-family: var(--font-poppins);
+  }
+
+  p, 
+  span, 
+  div, 
+  input, 
+  textarea, 
+  select {
+    font-family: var(--font-nunito);
   }
 }
 
@@ -214,6 +260,22 @@
 }
 
 /* Additional whimsical animations and effects */
+
+/* Pulse animation for sparkles */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(15deg);
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
 
 /* Gentle fade-in animation */
 @keyframes fade-in {
@@ -317,7 +379,15 @@
 /* Whimsical decorative elements */
 .whimsical-bg {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+  z-index: 0;
+}
+
+/* Sticky header styles */
+.sticky {
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .star-sprinkle {
@@ -325,7 +395,7 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 0;
+  z-index: 5;
 }
 
 .star-sprinkle .star {
@@ -339,7 +409,7 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 0;
+  z-index: 5;
 }
 
 .cloud-overlay .cloud {
