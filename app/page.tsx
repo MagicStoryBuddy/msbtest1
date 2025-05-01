@@ -10,24 +10,67 @@ export default function Home() {
   const [selectedHero, setSelectedHero] = useState("");
   const [selectedPlace, setSelectedPlace] = useState("");
   const [selectedMission, setSelectedMission] = useState("");
+  const [selectedLifeSkill, setSelectedLifeSkill] = useState("");
   const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
   
   const heroes = [
     { name: "Robo Rex", emoji: "🤖" },
     { name: "Drake", emoji: "🐉" },
-    { name: "Sparkles", emoji: "🦄" }
+    { name: "Sparkles", emoji: "🦄" },
+    { name: "Mila TanTan", emoji: "👶" },
+    { name: "Liam", emoji: "👦" },
+    { name: "Garyn", emoji: "👶🏼" }
   ];
   
   const places = [
     { name: "Castle", emoji: "🏰" },
     { name: "Forest", emoji: "🌲" },
-    { name: "Space", emoji: "🚀" }
+    { name: "Ocean", emoji: "🌊" },
+    { name: "Candy Land", emoji: "🍭" },
+    { name: "Silly Circus", emoji: "🎪" },
+    { name: "Rainbow Cloud Island", emoji: "🌈" },
+    { name: "Enchanted Garden", emoji: "🌷" },
+    { name: "Bug World", emoji: "🐞" },
+    { name: "Snowy Mountain", emoji: "❄️" },
+    { name: "Crystal Caves", emoji: "💎" },
+    { name: "Dino Land", emoji: "🦕" },
+    { name: "Dragon Valley", emoji: "🐉" },
+    { name: "Friendly Ghost Town", emoji: "👻" },
+    { name: "Unicorn Fields", emoji: "🦄" }
   ];
   
   const missions = [
     { name: "Find Treasure", emoji: "💎" },
     { name: "Help a Friend", emoji: "🤝" },
-    { name: "Decorate Festival", emoji: "🎪" }
+    { name: "Build a Tower", emoji: "🧱" },
+    { name: "Solve a Mystery", emoji: "🔍" },
+    { name: "Explore a Secret Tunnel", emoji: "🕳️" },
+    { name: "Follow a Map to Adventure", emoji: "🗺️" },
+    { name: "Collect Sparkle Stones", emoji: "✨" },
+    { name: "Cheer Someone Up", emoji: "😊" },
+    { name: "Plan a Surprise Party", emoji: "🎁" },
+    { name: "Clean up", emoji: "🧹" },
+    { name: "Deliver a Special Letter", emoji: "✉️" },
+    { name: "Find Something That was Lost", emoji: "🔎" },
+    { name: "Tame a Baby Dragon", emoji: "🐲" },
+    { name: "Find the Missing Song Notes", emoji: "🎵" },
+    { name: "Paint a Picture that Comes to Life", emoji: "🎨" },
+    { name: "Help Someone Learn the Alphabet", emoji: "🔤" },
+    { name: "Count the Stars", emoji: "⭐" },
+    { name: "Grow a Magic Garden", emoji: "🌱" },
+    { name: "Help Birds Build a Nest", emoji: "🪹" },
+    { name: "Find Firefly Light for the Lantern Festival", emoji: "🏮" }
+  ];
+  
+  const lifeSkills = [
+    { name: "Bravery", emoji: "🦸‍♀️" },
+    { name: "Dealing with Anger", emoji: "😤" },
+    { name: "Kindness", emoji: "💗" },
+    { name: "Shyness", emoji: "🙈" },
+    { name: "Patience", emoji: "⏳" },
+    { name: "Brushing Teeth", emoji: "🪥" },
+    { name: "Focus and Attention", emoji: "🔍" },
+    { name: "Gratitude", emoji: "🙏" }
   ];
 
   const openStoryModal = () => {
@@ -78,23 +121,23 @@ export default function Home() {
               </div>
               
               {/* How it Works Section */}
-              <div className="w-full max-w-3xl bg-gradient-to-b from-background/60 to-background/80 rounded-2xl p-8 border border-primary/20 shadow-md mt-10 mb-8 reveal-on-scroll fade-in delay-100">
-                <h3 className="text-3xl sm:text-4xl font-semibold text-primary mb-8 text-center font-baloo">How It Works</h3>
+              <div className="w-full max-w-4xl bg-gradient-to-b from-background/60 to-background/80 rounded-2xl p-10 border border-primary/20 shadow-md mt-10 mb-8 reveal-on-scroll fade-in delay-100">
+                <h3 className="text-4xl sm:text-5xl font-semibold text-primary mb-10 text-center font-baloo">How It Works</h3>
                 
-                <div className="flex flex-col md:flex-row gap-8 justify-between">
+                <div className="flex flex-col md:flex-row gap-10 justify-between">
                   <div className="flex-1 flex flex-col items-center text-center">
-                    <div className="w-20 h-20 bg-chart-1/30 rounded-full flex items-center justify-center text-3xl mb-4 transition-all duration-300">
+                    <div className="w-24 h-24 bg-chart-1/30 rounded-full flex items-center justify-center text-4xl mb-5 transition-all duration-300">
                       {selectedHero ? 
                         heroes.find(h => h.name === selectedHero)?.emoji :
                         <span className="opacity-70">1</span>
                       }
                     </div>
-                    <h4 className="font-medium mb-2 font-baloo">Pick a Hero</h4>
-                    <div className="flex flex-wrap justify-center gap-2 mt-2">
+                    <h4 className="text-xl font-medium mb-3 font-baloo">Pick a Hero</h4>
+                    <div className="flex flex-wrap justify-center gap-3 mt-3">
                       {heroes.map((hero) => (
                         <div
                           key={hero.name}
-                          className={`px-3 py-1.5 text-sm rounded-lg cursor-pointer transition-all duration-200 hover:scale-105 font-poppins ${
+                          className={`px-4 py-2 text-base rounded-lg cursor-pointer transition-all duration-200 hover:scale-105 font-poppins ${
                             selectedHero === hero.name 
                               ? "bg-chart-1 text-white font-medium" 
                               : "bg-chart-1/20 border border-chart-1/40 hover:bg-chart-1/30"
@@ -108,18 +151,18 @@ export default function Home() {
                   </div>
                   
                   <div className="flex-1 flex flex-col items-center text-center">
-                    <div className="w-20 h-20 bg-chart-2/30 rounded-full flex items-center justify-center text-3xl mb-4 transition-all duration-300">
+                    <div className="w-24 h-24 bg-chart-2/30 rounded-full flex items-center justify-center text-4xl mb-5 transition-all duration-300">
                       {selectedPlace ? 
                         places.find(p => p.name === selectedPlace)?.emoji :
                         <span className="opacity-70">2</span>
                       }
                     </div>
-                    <h4 className="font-medium mb-2 font-baloo">Choose a Place</h4>
-                    <div className="flex flex-wrap justify-center gap-2 mt-2">
+                    <h4 className="text-xl font-medium mb-3 font-baloo">Choose a Place</h4>
+                    <div className="flex flex-wrap justify-center gap-3 mt-3">
                       {places.map((place) => (
                         <div
                           key={place.name}
-                          className={`px-3 py-1.5 text-sm rounded-lg cursor-pointer transition-all duration-200 hover:scale-105 font-poppins ${
+                          className={`px-4 py-2 text-base rounded-lg cursor-pointer transition-all duration-200 hover:scale-105 font-poppins ${
                             selectedPlace === place.name 
                               ? "bg-chart-2 text-white font-medium" 
                               : "bg-chart-2/20 border border-chart-2/40 hover:bg-chart-2/30"
@@ -133,18 +176,18 @@ export default function Home() {
                   </div>
                   
                   <div className="flex-1 flex flex-col items-center text-center">
-                    <div className="w-20 h-20 bg-chart-3/30 rounded-full flex items-center justify-center text-3xl mb-4 transition-all duration-300">
+                    <div className="w-24 h-24 bg-chart-3/30 rounded-full flex items-center justify-center text-4xl mb-5 transition-all duration-300">
                       {selectedMission ? 
                         missions.find(m => m.name === selectedMission)?.emoji :
                         <span className="opacity-70">3</span>
                       }
                     </div>
-                    <h4 className="font-medium mb-2 font-baloo">Select a Mission</h4>
-                    <div className="flex flex-wrap justify-center gap-2 mt-2">
+                    <h4 className="text-xl font-medium mb-3 font-baloo">Select a Mission</h4>
+                    <div className="flex flex-wrap justify-center gap-3 mt-3">
                       {missions.map((mission) => (
                         <div
                           key={mission.name}
-                          className={`px-3 py-1.5 text-sm rounded-lg cursor-pointer transition-all duration-200 hover:scale-105 font-poppins ${
+                          className={`px-4 py-2 text-base rounded-lg cursor-pointer transition-all duration-200 hover:scale-105 font-poppins ${
                             selectedMission === mission.name 
                               ? "bg-chart-3 text-white font-medium" 
                               : "bg-chart-3/20 border border-chart-3/40 hover:bg-chart-3/30"
@@ -158,8 +201,33 @@ export default function Home() {
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-center mt-8 mb-2">
-                  <div className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl transition-all duration-500 ${
+                <div className="mt-8 flex flex-col items-center text-center">
+                  <div className="w-24 h-24 bg-chart-4/30 rounded-full flex items-center justify-center text-4xl mb-5 transition-all duration-300">
+                    {selectedLifeSkill ? 
+                      lifeSkills.find(ls => ls.name === selectedLifeSkill)?.emoji :
+                      <span className="opacity-70">+</span>
+                    }
+                  </div>
+                  <h4 className="text-xl font-medium mb-3 font-baloo">Life Skill (Optional)</h4>
+                  <div className="flex flex-wrap justify-center gap-3 mt-3 max-w-2xl">
+                    {lifeSkills.map((skill) => (
+                      <div
+                        key={skill.name}
+                        className={`px-4 py-2 text-base rounded-lg cursor-pointer transition-all duration-200 hover:scale-105 font-poppins ${
+                          selectedLifeSkill === skill.name 
+                            ? "bg-chart-4 text-white font-medium" 
+                            : "bg-chart-4/20 border border-chart-4/40 hover:bg-chart-4/30"
+                        }`}
+                        onClick={() => setSelectedLifeSkill(skill.name)}
+                      >
+                        {skill.name} {skill.emoji}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-center mt-10 mb-4">
+                  <div className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl transition-all duration-500 ${
                     selectedHero && selectedPlace && selectedMission 
                       ? "bg-accent scale-110 sparkle-button" 
                       : "bg-accent/30"
@@ -168,7 +236,7 @@ export default function Home() {
                   </div>
                   <div className="hidden md:block mx-4 flex-1 border-t-2 border-dashed border-accent/40"></div>
                   <div className="md:hidden mx-2 text-accent">→</div>
-                  <div className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl transition-all duration-500 ${
+                  <div className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl transition-all duration-500 ${
                     selectedHero && selectedPlace && selectedMission 
                       ? "bg-primary scale-125 animate-pulse shadow-lg" 
                       : "bg-primary/30"
@@ -176,17 +244,17 @@ export default function Home() {
                     📖
                   </div>
                 </div>
-                <p className="text-center text-lg font-medium text-primary mt-2 font-nunito">
+                <p className="text-center text-xl font-medium text-primary mt-4 font-nunito">
                   {selectedHero && selectedPlace && selectedMission 
                     ? `Your story about ${selectedHero} in the ${selectedPlace} is ready!` 
                     : "AI Magic creates a personalized bedtime story!"}
                 </p>
                 
                 {selectedHero && selectedPlace && selectedMission && (
-                  <div className="flex justify-center mt-4">
+                  <div className="flex justify-center mt-6">
                     <button 
                       onClick={openStoryModal}
-                      className="rounded-full bg-indigo-700 py-3 px-6 text-white font-medium text-base flex items-center justify-center gap-2 hover:bg-indigo-800 transition shadow-md sparkle-button font-poppins"
+                      className="rounded-full bg-indigo-700 py-4 px-8 text-white font-medium text-lg flex items-center justify-center gap-2 hover:bg-indigo-800 transition shadow-md sparkle-button font-poppins"
                     >
                       <span className="text-yellow-200">⭐</span> Try This Story
                     </button>
@@ -251,13 +319,16 @@ export default function Home() {
         </HomepageBackground>
 
         {/* Story Modal */}
-        <StoryModal 
-          isOpen={isStoryModalOpen} 
-          onClose={closeStoryModal} 
-          hero={selectedHero} 
-          place={selectedPlace} 
-          mission={selectedMission} 
-        />
+        {isStoryModalOpen && (
+          <StoryModal 
+            isOpen={isStoryModalOpen} 
+            onClose={closeStoryModal} 
+            hero={selectedHero}
+            place={selectedPlace}
+            mission={selectedMission}
+            lifeSkill={selectedLifeSkill}
+          />
+        )}
       </main>
     </PageLayout>
   );
