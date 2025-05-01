@@ -4,11 +4,13 @@ import { useState } from "react";
 import HomepageBackground from "./components/HomepageBackground";
 import Logo from "./components/Logo";
 import PageLayout from "./components/PageLayout";
+import StoryModal from "./components/StoryModal";
 
 export default function Home() {
   const [selectedHero, setSelectedHero] = useState("");
   const [selectedPlace, setSelectedPlace] = useState("");
   const [selectedMission, setSelectedMission] = useState("");
+  const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
   
   const heroes = [
     { name: "Robo Rex", emoji: "🤖" },
@@ -27,6 +29,14 @@ export default function Home() {
     { name: "Help a Friend", emoji: "🤝" },
     { name: "Decorate Festival", emoji: "🎪" }
   ];
+
+  const openStoryModal = () => {
+    setIsStoryModalOpen(true);
+  };
+
+  const closeStoryModal = () => {
+    setIsStoryModalOpen(false);
+  };
   
   return (
     <PageLayout currentPage="home">
@@ -174,12 +184,12 @@ export default function Home() {
                 
                 {selectedHero && selectedPlace && selectedMission && (
                   <div className="flex justify-center mt-4">
-                    <a 
-                      href="/dashboard" 
+                    <button 
+                      onClick={openStoryModal}
                       className="rounded-full bg-indigo-700 py-3 px-6 text-white font-medium text-base flex items-center justify-center gap-2 hover:bg-indigo-800 transition shadow-md sparkle-button font-poppins"
                     >
                       <span className="text-yellow-200">⭐</span> Try This Story
-                    </a>
+                    </button>
                   </div>
                 )}
               </div>
@@ -237,8 +247,17 @@ export default function Home() {
                 </a>
               </div>
             </div>
-    </div>
+          </div>
         </HomepageBackground>
+
+        {/* Story Modal */}
+        <StoryModal 
+          isOpen={isStoryModalOpen} 
+          onClose={closeStoryModal} 
+          hero={selectedHero} 
+          place={selectedPlace} 
+          mission={selectedMission} 
+        />
       </main>
     </PageLayout>
   );

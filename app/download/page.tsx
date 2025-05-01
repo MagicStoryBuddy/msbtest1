@@ -5,18 +5,24 @@ import Logo from "../components/Logo";
 export default function Download() {
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-card shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <header className="sticky top-0 z-50 bg-card shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
           <div className="flex justify-between items-center">
-            <Logo size={40} />
-            <div className="flex items-center gap-4">
-              <Link href="/" className="text-sm text-primary hover:underline">
+            <Logo size={28} showText={false} />
+            <nav className="flex items-center gap-4 text-xs">
+              <Link href="/" className="font-medium text-muted-foreground hover:text-primary">
                 Home
               </Link>
-              <Link href="/help" className="text-sm text-primary hover:underline">
+              <Link href="/dashboard" className="font-medium text-muted-foreground hover:text-primary">
+                Dashboard
+              </Link>
+              <Link href="/stories" className="font-medium text-muted-foreground hover:text-primary">
+                Stories
+              </Link>
+              <Link href="/help" className="font-medium text-muted-foreground hover:text-primary">
                 Help
               </Link>
-            </div>
+            </nav>
           </div>
         </div>
       </header>
@@ -31,20 +37,9 @@ export default function Download() {
           </div>
           
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="flex justify-center items-center gap-4 mb-6">
-              <Image 
-                src="/logo.svg"
-                alt="Magic Story Buddy Logo"
-                width={100}
-                height={100}
-                priority
-                className="floating-element"
-                style={{ animationDelay: '1s' }}
-              />
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground">
-                Magic Story Buddy
-              </h1>
-            </div>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
+              Magic Story Buddy
+            </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
               The Last Bedtime Book You'll Ever Need
             </p>
