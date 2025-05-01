@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import Logo from "../components/Logo";
 
 export default function Help() {
   return (
@@ -7,9 +8,7 @@ export default function Help() {
       <header className="bg-card shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold text-primary hover:opacity-90">
-              Magic Story Buddy
-            </Link>
+            <Logo size={40} />
             <div className="flex items-center gap-4">
               <Link href="/dashboard" className="text-sm text-primary hover:underline">
                 Dashboard
@@ -27,16 +26,16 @@ export default function Help() {
 
         {/* Tabs for different sections */}
         <div className="flex flex-wrap justify-center gap-2 mb-8">
-          <a href="#faq" className="px-4 py-2 rounded-full bg-secondary text-secondary-foreground text-sm font-medium">
+          <a href="#faq" className="sparkle-button px-4 py-2 rounded-full bg-secondary text-secondary-foreground text-sm font-medium">
             FAQ
           </a>
-          <a href="#contact" className="px-4 py-2 rounded-full bg-secondary text-secondary-foreground text-sm font-medium">
+          <a href="#contact" className="sparkle-button px-4 py-2 rounded-full bg-secondary text-secondary-foreground text-sm font-medium">
             Contact Us
           </a>
-          <a href="#privacy" className="px-4 py-2 rounded-full bg-secondary text-secondary-foreground text-sm font-medium">
+          <a href="#privacy" className="sparkle-button px-4 py-2 rounded-full bg-secondary text-secondary-foreground text-sm font-medium">
             Privacy Policy
           </a>
-          <a href="#credits" className="px-4 py-2 rounded-full bg-secondary text-secondary-foreground text-sm font-medium">
+          <a href="#credits" className="sparkle-button px-4 py-2 rounded-full bg-secondary text-secondary-foreground text-sm font-medium">
             Our Team
           </a>
         </div>
@@ -160,7 +159,7 @@ export default function Help() {
             
             <button
               type="submit"
-              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90"
+              className="sparkle-button px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90"
             >
               Send Message
             </button>

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import Logo from "./components/Logo";
 
 export default function Home() {
   return (
@@ -7,9 +8,7 @@ export default function Home() {
       <header className="bg-card shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <Link href="/" className="text-2xl font-bold text-primary hover:opacity-90">
-              Magic Story Buddy
-            </Link>
+            <Logo size={48} className="text-2xl" />
             <nav className="flex items-center gap-6">
               <Link href="/" className="text-sm font-medium text-primary hover:text-primary/80">
                 Home
@@ -38,33 +37,49 @@ export default function Home() {
         <main className="flex flex-col gap-[32px] row-start-1 items-center max-w-6xl w-full">
           <div className="flex flex-col md:flex-row w-full gap-8 items-center">
             <div className="flex flex-col gap-6 md:w-1/2">
-              <h1 className="text-4xl md:text-5xl font-bold text-primary text-center md:text-left">Magic Story Buddy</h1>
+              <div className="relative">
+                {/* Animated stars and clouds around title */}
+                <div className="star text-yellow-300 text-xl" style={{ top: '-15px', left: '10%', animationDelay: '0.5s' }}>✨</div>
+                <div className="star text-yellow-300 text-xl" style={{ top: '-5px', right: '20%', animationDelay: '1.2s' }}>⭐</div>
+                <div className="star text-yellow-300 text-xl" style={{ bottom: '0px', right: '10%', animationDelay: '0.8s' }}>✨</div>
+                <div className="cloud text-blue-100 text-2xl" style={{ top: '-20px', left: '30%', animationDelay: '1.5s' }}>☁️</div>
+                <div className="cloud text-blue-100 text-2xl" style={{ bottom: '-5px', left: '5%', animationDelay: '2s' }}>☁️</div>
+                
+                <div className="floating-element text-chart-3 text-lg" style={{ top: '5px', right: '5%', animationDelay: '0.3s' }}>🌟</div>
+                <div className="floating-element text-chart-2 text-lg" style={{ bottom: '10px', left: '35%', animationDelay: '1.7s' }}>✨</div>
+                
+                <div className="flex items-center gap-4">
+                  <Image 
+                    src="/logo.svg"
+                    alt="Magic Story Buddy Logo"
+                    width={80}
+                    height={80}
+                    priority
+                    className="floating-element"
+                    style={{ animationDelay: '1s' }}
+                  />
+                  <h1 className="text-4xl md:text-5xl font-bold text-primary text-center md:text-left relative z-10">
+                    Magic Story Buddy
+                  </h1>
+                </div>
+              </div>
               
-              <p className="text-2xl text-center md:text-left text-secondary-foreground">
+              <p className="text-2xl md:text-3xl text-center md:text-left text-secondary-foreground font-[family-name:var(--font-rounded)] tracking-wide leading-relaxed">
                 The Last Bedtime Book You'll Ever Need.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 my-4">
-                <a href="/auth/signin" className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-primary text-primary-foreground gap-2 hover:opacity-90 font-medium text-lg h-12 px-6">
+                <a href="/auth/signin" className="sparkle-button rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-primary text-primary-foreground gap-2 hover:opacity-90 font-medium text-lg h-12 px-6">
                   Sign In
                 </a>
-                <a href="/auth/signup" className="rounded-full border border-solid border-secondary transition-colors flex items-center justify-center bg-secondary text-secondary-foreground gap-2 hover:opacity-90 font-medium text-lg h-12 px-6">
+                <a href="/auth/signup" className="sparkle-button rounded-full border border-solid border-secondary transition-colors flex items-center justify-center bg-secondary text-secondary-foreground gap-2 hover:opacity-90 font-medium text-lg h-12 px-6">
                   Sign Up
                 </a>
               </div>
               
               <div className="mt-2 w-full">
-                <a href="/dashboard" className="w-full rounded-full border-2 border-dashed border-chart-5 transition-colors flex items-center justify-center bg-chart-5/10 text-chart-5 gap-2 hover:bg-chart-5/20 font-bold text-lg h-12 px-6">
+                <a href="/dashboard" className="sparkle-button w-full rounded-full border-2 border-dashed border-chart-5 transition-colors flex items-center justify-center bg-chart-5/10 text-chart-5 gap-2 hover:bg-chart-5/20 font-bold text-lg h-12 px-6">
                   👉 Demo Dashboard 👈
-                </a>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <a href="/download" className="rounded-full border border-solid border-black/10 transition-colors flex items-center justify-center bg-secondary text-secondary-foreground gap-2 hover:opacity-90 font-medium h-12 px-5">
-                  <span className="text-xl mr-2">🍎</span> Download on App Store
-                </a>
-                <a href="/download" className="rounded-full border border-solid border-black/10 transition-colors flex items-center justify-center bg-accent text-accent-foreground gap-2 hover:opacity-90 font-medium h-12 px-5">
-                  <span className="text-xl mr-2">🤖</span> Get it on Google Play
                 </a>
               </div>
 
@@ -97,28 +112,21 @@ export default function Home() {
             </div>
           </div>
           
-          <div className="rounded-2xl bg-card p-8 shadow-lg max-w-md w-full mt-8">
-            <div className="flex flex-col gap-6 items-center">
-              <button className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-primary text-primary-foreground gap-2 hover:opacity-90 font-medium text-lg h-14 px-6 w-full">
-                Start a New Story
-              </button>
-              
-              <button className="rounded-full border border-solid border-secondary transition-colors flex items-center justify-center bg-secondary text-secondary-foreground gap-2 hover:opacity-90 font-medium text-lg h-14 px-6 w-full">
-                Read a Story
-              </button>
-              
-              <button className="rounded-full border border-solid border-accent transition-colors flex items-center justify-center bg-accent text-accent-foreground gap-2 hover:opacity-90 font-medium text-lg h-14 px-6 w-full">
-                Draw a Picture
-              </button>
-            </div>
-          </div>
-          
           <div className="flex gap-4 items-center justify-center flex-wrap">
             <div className="rounded-full h-16 w-16 bg-chart-1 flex items-center justify-center text-2xl">🦄</div>
             <div className="rounded-full h-16 w-16 bg-chart-2 flex items-center justify-center text-2xl">🌟</div>
             <div className="rounded-full h-16 w-16 bg-chart-3 flex items-center justify-center text-2xl">🦋</div>
             <div className="rounded-full h-16 w-16 bg-chart-4 flex items-center justify-center text-2xl">🌈</div>
             <div className="rounded-full h-16 w-16 bg-chart-5 flex items-center justify-center text-2xl">🐶</div>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mt-4">
+            <a href="/download" className="sparkle-button rounded-full border border-solid border-black/10 transition-colors flex items-center justify-center bg-secondary text-secondary-foreground gap-1 hover:opacity-90 font-medium text-sm h-10 px-4">
+              <span className="text-lg mr-1">🍎</span> App Store
+            </a>
+            <a href="/download" className="sparkle-button rounded-full border border-solid border-black/10 transition-colors flex items-center justify-center bg-accent text-accent-foreground gap-1 hover:opacity-90 font-medium text-sm h-10 px-4">
+              <span className="text-lg mr-1">🤖</span> Google Play
+            </a>
           </div>
         </main>
         <footer className="row-start-2 flex gap-[24px] flex-wrap items-center justify-center text-muted-foreground">

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Logo from "../components/Logo";
 
 export default function Settings() {
   return (
@@ -6,9 +7,7 @@ export default function Settings() {
       <header className="bg-card shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold text-primary hover:opacity-90">
-              Magic Story Buddy
-            </Link>
+            <Logo size={40} />
             <div className="flex items-center gap-4">
               <Link href="/dashboard" className="text-sm text-primary hover:underline">
                 Dashboard
@@ -55,7 +54,7 @@ export default function Settings() {
                   />
                 </div>
                 
-                <button className="rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium">
+                <button className="rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium sparkle-button">
                   Update Email
                 </button>
               </div>
@@ -99,7 +98,7 @@ export default function Settings() {
                     />
                   </div>
                   
-                  <button className="rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium">
+                  <button className="rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium sparkle-button">
                     Update Password
                   </button>
                 </div>
@@ -243,7 +242,7 @@ export default function Settings() {
             >
               Cancel
             </Link>
-            <button className="rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium">
+            <button className="rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium sparkle-button">
               Save All Settings
             </button>
           </div>

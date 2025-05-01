@@ -1,0 +1,29 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background mint circle -->
+  <circle cx="256" cy="256" r="256" fill="#DEF7E9" />
+  
+  <!-- Purple circle enclosing happy face -->
+  <circle cx="256" cy="220" r="100" fill="#A490E2" stroke="#A490E2" stroke-width="12" />
+  
+  <!-- Happy face inside purple circle -->
+  <circle cx="256" cy="220" r="85" fill="#F4DFF7" />
+  <path d="M226 200 Q256 240 286 200" stroke="#A490E2" stroke-width="8" stroke-linecap="round" />
+  <path d="M219 190 Q222 186 225 190" stroke="#A490E2" stroke-width="8" stroke-linecap="round" />
+  <path d="M287 190 Q290 186 293 190" stroke="#A490E2" stroke-width="8" stroke-linecap="round" />
+  
+  <!-- Book outlines -->
+  <path d="M120 270 Q160 200 256 200 Q352 200 392 270 L392 430 Q352 380 256 380 Q160 380 120 430 L120 270Z" stroke="#A490E2" stroke-width="12" fill="#CBDCF7" />
+  <path d="M256 200 L256 380" stroke="#A490E2" stroke-width="12" />
+  <path d="M150 245 Q200 220 256 220 L256 350 Q200 330 150 350 L150 245Z" fill="#F7F2D9" />
+  <path d="M362 245 Q312 220 256 220 L256 350 Q312 330 362 350 L362 245Z" fill="#F7F2D9" />
+  
+  <!-- Sparkling stars -->
+  <path d="M352 140 L360 148 L368 140 L360 132 Z" fill="#F9DC8B" />
+  <path d="M146 130 L154 138 L162 130 L154 122 Z" fill="#F9DC8B" />
+  <path d="M128 342 L138 352 L148 342 L138 332 Z" fill="#F9DC8B" />
+  <path d="M374 342 L384 352 L394 342 L384 332 Z" fill="#F9DC8B" />
+  <circle cx="374" cy="178" r="8" fill="#F9DC8B" />
+  <circle cx="182" cy="104" r="8" fill="#F9DC8B" />
+  <circle cx="143" cy="298" r="8" fill="#F9DC8B" />
+  <circle cx="352" cy="298" r="8" fill="#F9DC8B" />
+</svg> 
