@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { OpenAI } from 'openai';
 
-// Initialize OpenAI with the provided API key
+// API Key for OpenAI
+const API_KEY = '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';
+
+// Initialize OpenAI with the provided API key (with fallback)
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY || API_KEY,
 });
 
 export async function GET(request: NextRequest) {
   try {
     console.log('Testing OpenAI API connection...');
-    console.log('API Key (first 5 chars):', process.env.OPENAI_API_KEY?.substring(0, 5));
+    console.log('API Key (first 12 chars):', (process.env.OPENAI_API_KEY || API_KEY).substring(0, 12) + '...');
     
     // Simple test request to OpenAI
     const response = await openai.chat.completions.create({
