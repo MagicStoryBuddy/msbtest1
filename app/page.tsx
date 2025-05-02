@@ -7,7 +7,7 @@ import PageLayout from "./components/PageLayout";
 import StoryModal from "./components/StoryModal";
 
 export default function Home() {
-  const [selectedHero, setSelectedHero] = useState("");
+  const [selectedHeroes, setSelectedHeroes] = useState<string[]>([]);
   const [selectedPlace, setSelectedPlace] = useState("");
   const [selectedMission, setSelectedMission] = useState("");
   const [selectedLifeSkill, setSelectedLifeSkill] = useState("");
@@ -20,47 +20,23 @@ export default function Home() {
     { name: "Mila TanTan", emoji: "👶" },
     { name: "Liam", emoji: "👦" },
     { name: "Garyn", emoji: "👶🏼" },
-    { name: "Futa", emoji: "👦🏻" }
+    { name: "Bop-Bop", emoji: "🐰" },
+    { name: "Puffy", emoji: "☁️" }
   ];
   
   const places = [
     { name: "Castle", emoji: "🏰" },
     { name: "Forest", emoji: "🌲" },
-    { name: "Ocean", emoji: "🌊" },
     { name: "Candy Land", emoji: "🍭" },
-    { name: "Silly Circus", emoji: "🎪" },
-    { name: "Rainbow Cloud Island", emoji: "🌈" },
-    { name: "Enchanted Garden", emoji: "🌷" },
-    { name: "Bug World", emoji: "🐞" },
-    { name: "Snowy Mountain", emoji: "❄️" },
-    { name: "Crystal Caves", emoji: "💎" },
-    { name: "Dino Land", emoji: "🦕" },
-    { name: "Dragon Valley", emoji: "🐉" },
-    { name: "Friendly Ghost Town", emoji: "👻" },
-    { name: "Unicorn Fields", emoji: "🦄" }
+    { name: "Dino Land", emoji: "🦕" }
   ];
   
   const missions = [
     { name: "Find Treasure", emoji: "💎" },
     { name: "Help a Friend", emoji: "🤝" },
-    { name: "Build a Tower", emoji: "🧱" },
     { name: "Solve a Mystery", emoji: "🔍" },
-    { name: "Explore a Secret Tunnel", emoji: "🕳️" },
-    { name: "Follow a Map to Adventure", emoji: "🗺️" },
-    { name: "Collect Sparkle Stones", emoji: "✨" },
-    { name: "Cheer Someone Up", emoji: "😊" },
-    { name: "Plan a Surprise Party", emoji: "🎁" },
-    { name: "Clean up", emoji: "🧹" },
-    { name: "Deliver a Special Letter", emoji: "✉️" },
-    { name: "Find Something That was Lost", emoji: "🔎" },
-    { name: "Tame a Baby Dragon", emoji: "🐲" },
-    { name: "Find the Missing Song Notes", emoji: "🎵" },
     { name: "Paint a Picture that Comes to Life", emoji: "🎨" },
-    { name: "Help Someone Learn the Alphabet", emoji: "🔤" },
-    { name: "Count the Stars", emoji: "⭐" },
-    { name: "Grow a Magic Garden", emoji: "🌱" },
-    { name: "Help Birds Build a Nest", emoji: "🪹" },
-    { name: "Find Firefly Light for the Lantern Festival", emoji: "🏮" }
+    { name: "Tame a Baby Dragon", emoji: "🐲" }
   ];
   
   const lifeSkills = [
@@ -74,6 +50,34 @@ export default function Home() {
     { name: "Gratitude", emoji: "🙏" }
   ];
 
+  const toggleHero = (heroName: string) => {
+    setSelectedHeroes(prev => {
+      if (prev.includes(heroName)) {
+        return prev.filter(h => h !== heroName);
+      } else if (prev.length < 3) {
+        return [...prev, heroName];
+      } else {
+        return [...prev.slice(1), heroName];
+      }
+    });
+  };
+
+  const togglePlace = (placeName: string) => {
+    setSelectedPlace(prev => prev === placeName ? "" : placeName);
+  };
+
+  const toggleMission = (missionName: string) => {
+    setSelectedMission(prev => prev === missionName ? "" : missionName);
+  };
+
+  const toggleLifeSkill = (skillName: string) => {
+    setSelectedLifeSkill(prev => prev === skillName ? "" : skillName);
+  };
+
+  const getPrimaryHero = () => {
+    return selectedHeroes.length > 0 ? selectedHeroes[0] : "";
+  };
+
   const openStoryModal = () => {
     setIsStoryModalOpen(true);
   };
@@ -81,6 +85,8 @@ export default function Home() {
   const closeStoryModal = () => {
     setIsStoryModalOpen(false);
   };
+  
+  const canGenerateStory = selectedHeroes.length > 0;
   
   return (
     <PageLayout currentPage="home">
@@ -117,29 +123,29 @@ export default function Home() {
                 </div>
               </div>
               
-              {/* Let's Make a Magic Story section */}
               <div id="make-story" className="w-full max-w-4xl bg-gradient-to-b from-background/60 to-background/80 rounded-2xl p-10 border border-primary/20 shadow-md mt-10 mb-8 reveal-on-scroll fade-in delay-100">
                 <h3 className="text-4xl sm:text-5xl font-semibold text-primary mb-10 text-center font-baloo">Let's Make a Magic Story!</h3>
                 
                 <div className="flex flex-col md:flex-row gap-10 justify-between">
                   <div className="flex-1 flex flex-col items-center text-center">
                     <div className="w-24 h-24 bg-chart-1/30 rounded-full flex items-center justify-center text-4xl mb-5 transition-all duration-300">
-                      {selectedHero ? 
-                        heroes.find(h => h.name === selectedHero)?.emoji :
+                      {selectedHeroes.length > 0 ? 
+                        heroes.find(h => h.name === selectedHeroes[0])?.emoji :
                         <span className="opacity-70">1</span>
                       }
                     </div>
-                    <h4 className="text-xl font-medium mb-3 font-baloo">Pick a Hero</h4>
+                    <h4 className="text-xl font-medium mb-3 font-baloo">Pick a Buddy</h4>
+                    <div className="text-sm text-indigo-600 mb-2">Choose up to 3 buddies!</div>
                     <div className="flex flex-wrap justify-center gap-3 mt-3">
                       {heroes.map((hero) => (
                         <div
                           key={hero.name}
                           className={`px-4 py-2 text-base rounded-lg cursor-pointer transition-all duration-200 hover:scale-105 font-poppins ${
-                            selectedHero === hero.name 
+                            selectedHeroes.includes(hero.name) 
                               ? "bg-chart-1 text-white font-medium" 
                               : "bg-chart-1/20 border border-chart-1/40 hover:bg-chart-1/30"
                           }`}
-                          onClick={() => setSelectedHero(hero.name)}
+                          onClick={() => toggleHero(hero.name)}
                         >
                           {hero.name} {hero.emoji}
                         </div>
@@ -154,7 +160,8 @@ export default function Home() {
                         <span className="opacity-70">2</span>
                       }
                     </div>
-                    <h4 className="text-xl font-medium mb-3 font-baloo">Choose a Place</h4>
+                    <h4 className="text-xl font-medium mb-3 font-baloo">Pick a Place</h4>
+                    <div className="text-sm text-indigo-600 mb-2">Optional - we'll choose randomly if skipped</div>
                     <div className="flex flex-wrap justify-center gap-3 mt-3">
                       {places.map((place) => (
                         <div
@@ -164,7 +171,7 @@ export default function Home() {
                               ? "bg-chart-2 text-white font-medium" 
                               : "bg-chart-2/20 border border-chart-2/40 hover:bg-chart-2/30"
                           }`}
-                          onClick={() => setSelectedPlace(place.name)}
+                          onClick={() => togglePlace(place.name)}
                         >
                           {place.name} {place.emoji}
                         </div>
@@ -179,7 +186,8 @@ export default function Home() {
                         <span className="opacity-70">3</span>
                       }
                     </div>
-                    <h4 className="text-xl font-medium mb-3 font-baloo">Select a Mission</h4>
+                    <h4 className="text-xl font-medium mb-3 font-baloo">Pick a Mission</h4>
+                    <div className="text-sm text-indigo-600 mb-2">Optional - we'll choose randomly if skipped</div>
                     <div className="flex flex-wrap justify-center gap-3 mt-3">
                       {missions.map((mission) => (
                         <div
@@ -189,7 +197,7 @@ export default function Home() {
                               ? "bg-chart-3 text-white font-medium" 
                               : "bg-chart-3/20 border border-chart-3/40 hover:bg-chart-3/30"
                           }`}
-                          onClick={() => setSelectedMission(mission.name)}
+                          onClick={() => toggleMission(mission.name)}
                         >
                           {mission.name} {mission.emoji}
                         </div>
@@ -206,6 +214,7 @@ export default function Home() {
                     }
                   </div>
                   <h4 className="text-xl font-medium mb-3 font-baloo">Life Skill (Optional)</h4>
+                  <div className="text-sm text-indigo-600 mb-2">For parents: Choose a value or skill you'd like the story to teach</div>
                   <div className="flex flex-wrap justify-center gap-3 mt-3 max-w-2xl">
                     {lifeSkills.map((skill) => (
                       <div
@@ -215,7 +224,7 @@ export default function Home() {
                             ? "bg-chart-4 text-white font-medium" 
                             : "bg-chart-4/20 border border-chart-4/40 hover:bg-chart-4/30"
                         }`}
-                        onClick={() => setSelectedLifeSkill(skill.name)}
+                        onClick={() => toggleLifeSkill(skill.name)}
                       >
                         {skill.name} {skill.emoji}
                       </div>
@@ -225,7 +234,7 @@ export default function Home() {
                 
                 <div className="flex items-center justify-center mt-10 mb-4">
                   <div className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl transition-all duration-500 ${
-                    selectedHero && selectedPlace && selectedMission 
+                    canGenerateStory
                       ? "bg-accent scale-110 sparkle-button" 
                       : "bg-accent/30"
                   }`}>
@@ -234,7 +243,7 @@ export default function Home() {
                   <div className="hidden md:block mx-4 flex-1 border-t-2 border-dashed border-accent/40"></div>
                   <div className="md:hidden mx-2 text-accent">→</div>
                   <div className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl transition-all duration-500 ${
-                    selectedHero && selectedPlace && selectedMission 
+                    canGenerateStory
                       ? "bg-primary scale-125 animate-pulse shadow-lg" 
                       : "bg-primary/30"
                   }`}>
@@ -242,12 +251,12 @@ export default function Home() {
                   </div>
                 </div>
                 <p className="text-center text-xl font-medium text-primary mt-4 font-nunito">
-                  {selectedHero && selectedPlace && selectedMission 
-                    ? `Your story about ${selectedHero} in the ${selectedPlace} is ready!` 
-                    : "AI Magic creates a personalized bedtime story!"}
+                  {canGenerateStory 
+                    ? `Your magical story is ready!` 
+                    : "Pick at least one buddy to create a story!"}
                 </p>
                 
-                {selectedHero && selectedPlace && selectedMission && (
+                {canGenerateStory && (
                   <div className="flex justify-center mt-6">
                     <button 
                       onClick={openStoryModal}
@@ -265,7 +274,7 @@ export default function Home() {
                 </a>
                 <a href="/auth/signup" className="sparkle-button rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-accent text-accent-foreground hover:opacity-90 font-medium text-lg h-14 px-10 min-w-40 font-poppins">
                   Sign Up
-        </a>
+                </a>
               </div>
               
               <div className="mt-8 w-full max-w-md">
@@ -292,7 +301,7 @@ export default function Home() {
                 <a 
                   href="/download" 
                   className="sparkle-button flex items-center justify-center gap-4 px-8 py-4 bg-blue-100/80 hover:bg-blue-100 text-gray-800 rounded-full transition-colors sm:min-w-72 font-poppins"
-        >
+                >
                   <span className="text-3xl">🍎</span>
                   <div className="flex flex-col items-start">
                     <span className="text-sm">Download on the</span>
@@ -320,10 +329,11 @@ export default function Home() {
           <StoryModal 
             isOpen={isStoryModalOpen} 
             onClose={closeStoryModal} 
-            hero={selectedHero}
+            hero={getPrimaryHero()}
             place={selectedPlace}
             mission={selectedMission}
             lifeSkill={selectedLifeSkill}
+            additionalHeroes={selectedHeroes.slice(1)}
           />
         )}
       </main>

@@ -36,62 +36,46 @@ if (ENABLE_OPENAI) {
 }
 
 // Direct OpenAI API call function (without using the client library)
-async function generateOpenAIStory(hero: string, place: string, mission: string, lifeSkill?: string): Promise<string> {
+async function generateOpenAIStory(hero: string, place: string | null, mission: string | null, lifeSkill?: string, additionalHeroes?: string[]): Promise<string> {
+  // Create the prompt based on what user has provided
+  // If place or mission are null, let OpenAI create its own rather than selecting from our list
   const prompt = `
-Create a gentle, cozy bedtime story for children aged 3-5 years old that is about 3-5 minutes when read aloud.
+Create a cozy bedtime story for children ages 3-5 (3-5 minutes read-aloud time).
 
-The main character is: ${hero}
-The setting is: ${place}
-The mission is: ${mission}
-${lifeSkill ? `The story should teach about: ${lifeSkill}` : ''}
+CHARACTER: ${hero}
+${place ? `SETTING: ${place}` : 'SETTING: [create any magical or interesting place appropriate for a children\'s story]'}
+${mission ? `MISSION: ${mission}` : 'MISSION: [create any fun adventure or mission appropriate for a children\'s story]'}
+${lifeSkill ? `TEACHING POINT: ${lifeSkill}` : ''}
 
-Include one age-appropriate teaching point in the story, such as ${lifeSkill || 'sharing, being kind, patience, or overcoming a small fear'}.
+KEY REQUIREMENTS:
+- Brief character intro (1-2 sentences) then jump straight to the mission
+- Include age-appropriate teaching point: ${lifeSkill || 'sharing, kindness, patience, or courage'}
+- Add simple educational elements like colors, counting 1-10, shapes, or alphabet concepts
+- Use simple language, short paragraphs, and repetition where appropriate
+- Reveal character traits naturally through the story, not in lengthy introduction
+${!place ? '- Create a unique, imaginative setting - you\'re not limited to standard places' : ''}
+${!mission ? '- Create a unique, creative mission or adventure - you\'re not limited to standard quests' : ''}
 
-Please also include simple educational elements appropriate for 3-5 year olds, like colors, counting 1-10, shapes, or simple alphabet concepts.
-
-IMPORTANT STORYTELLING GUIDANCE:
-- Introduce the character naturally without frontloading all their traits and background information at the beginning.
-- Instead of describing everything about the character in the introduction, reveal their traits, likes, dislikes, and relationships organically throughout the story when relevant to the action.
-- For example, if a character likes a certain drink, mention it when they're taking a break during their adventure rather than listing it in the introduction.
-- Allow readers to learn about the character through their actions and responses to situations rather than through exposition.
-- If a character has family members or friends, introduce them naturally when they become relevant to the story rather than listing them all at the start.
-
-Please write the story using gentle, cozy language with simple sentence structure appropriate for 3-5 year olds. Use short paragraphs, repetition where appropriate, and leave room for imagination.
-
-The story should have a clear beginning, middle, and end structure, with a satisfying resolution to the mission.
-
-IMPORTANT: In the middle of the story, include ONE "choose your own path" moment. This should appear in a format like:
+STORY FORMAT:
+1. Very brief character introduction
+2. Quick jump into the mission/adventure
+3. Include ONE interactive choice moment using this exact format:
 
 ===CHOICE POINT===
-The character faced a choice. Should they [Option A] or [Option B]?
+Should they [Option A] or [Option B]?
 ===END CHOICE POINT===
 
 ===OPTION A OUTCOME===
-[Describe what happens if Option A is chosen, leading to the resolution of the story]
+[Option A result and continuation]
 ===END OPTION A OUTCOME===
 
 ===OPTION B OUTCOME===
-[Describe what happens if Option B is chosen, leading to the resolution of the story]
+[Option B result and continuation]
 ===END OPTION B OUTCOME===
 
-Make the choice point creative and meaningful, with distinct paths that feel different but both lead to success. Avoid always using the "do it alone vs. ask for help" pattern. Instead, create more varied and interesting choices that children would find engaging, such as:
+Make both choices creative and equally valid (different routes, tools, approaches, or creatures). Avoid the basic "do it alone vs. ask for help" pattern.
 
-- Different routes to take (over a mountain vs. across a bridge)
-- Different approaches to a problem (using logic vs. using creativity)  
-- Different tools/items to use (a map vs. a magic key)
-- Different creatures to interact with (a friendly dragon vs. a wise owl)
-- Different environments to explore (a dark cave vs. a sunny meadow)
-- Different methods (being quiet and sneaky vs. being brave and direct)
-- Different times of day (waiting until night vs. going during daytime)
-- Different emotions to express (showing sadness vs. showing excitement)
-
-Each choice should lead to a different but equally valid way to complete the mission, with unique challenges, experiences, and small lessons along each path.
-
-This format will allow our app to present an interactive choice to the child, showing only the outcome they choose.
-
-Use whimsical, cozy, simple English throughout the story.
-
-End the story with "The end. Would you like to go on another adventure with [CHARACTER NAME]? Or are you ready to join [CHARACTER NAME] in Dreamland?"
+End with: "The end. Would you like to go on another adventure with [CHARACTER NAME]? Or are you ready to join [CHARACTER NAME] in Dreamland?"
 `;
 
   console.log('Sending request to OpenAI with prompt:', prompt.substring(0, 200) + '...');
@@ -115,7 +99,7 @@ End the story with "The end. Would you like to go on another adventure with [CHA
             content: prompt
           }
         ],
-        temperature: 0.7,
+        temperature: 0.8, // Slightly increase creativity for more unique places and missions
         max_tokens: 1500
       })
     });
@@ -144,7 +128,45 @@ End the story with "The end. Would you like to go on another adventure with [CHA
 }
 
 // Enhanced built-in story generator with more variety
-function generateBuiltInStory(hero: string, place: string, mission: string, lifeSkill?: string): string {
+function generateBuiltInStory(hero: string, place: string | null, mission: string | null, lifeSkill?: string): string {
+  // If place isn't provided, choose a more interesting random one beyond our standard set
+  const randomPlaces = [
+    "Castle", "Forest", "Ocean", "Candy Land", "Silly Circus", 
+    "Rainbow Cloud Island", "Enchanted Garden", "Bug World", 
+    "Snowy Mountain", "Crystal Caves", "Dino Land", "Dragon Valley", 
+    "Friendly Ghost Town", "Unicorn Fields",
+    // Add more creative places not shown in UI
+    "Bubble Kingdom", "Cloud City", "Marshmallow Mountains", 
+    "Talking Tree Village", "Moonlight Meadow", "Starshine Beach",
+    "Whispering Waterfall", "Giggling Garden", "Cookie Canyon",
+    "Dream Desert", "Purple Planet", "Singing Sea", "Telescope Tower",
+    "Bouncy Balloon Land", "Jelly Jungle", "Glowing Geyser Valley"
+  ];
+   
+  // If mission isn't provided, choose a more interesting random one beyond our standard set
+  const randomMissions = [
+    "Find Treasure", "Help a Friend", "Build a Tower", "Solve a Mystery", 
+    "Explore a Secret Tunnel", "Follow a Map to Adventure", "Collect Sparkle Stones", 
+    "Cheer Someone Up", "Plan a Surprise Party", "Clean up", 
+    "Deliver a Special Letter", "Find Something That was Lost", "Tame a Baby Dragon", 
+    "Find the Missing Song Notes", "Paint a Picture that Comes to Life", 
+    "Help Someone Learn the Alphabet", "Count the Stars", "Grow a Magic Garden", 
+    "Help Birds Build a Nest", "Find Firefly Light for the Lantern Festival",
+    // Add more creative missions not shown in UI
+    "Rescue a Cloud That Can't Rain", "Find the Lost Rainbow Colors",
+    "Help the Sun and Moon Become Friends", "Teach the Stars How to Twinkle",
+    "Find the Cure for a Sad Flower", "Discover Why the Wind is Whispering",
+    "Reunite a Baby Comet with Its Family", "Solve the Mystery of the Dancing Shoes",
+    "Help the Shy Shadow Learn to Play", "Find the Recipe for Happiness Cookies",
+    "Discover Why the Books Won't Tell Their Stories", "Find the Lost Lullaby",
+    "Help the Thunder Learn to Be Quieter", "Teach the Echo How to Say New Words",
+    "Find the Magic That Makes Bubbles Pop"
+  ];
+   
+  // Choose random place and mission if not provided
+  const placeToUse = place || randomPlaces[Math.floor(Math.random() * randomPlaces.length)];
+  const missionToUse = mission || randomMissions[Math.floor(Math.random() * randomMissions.length)];
+
   // Use the provided life skill or select a random teaching point
   let teachingPoint = '';
   
@@ -215,9 +237,9 @@ ${storyStarter}, a robot named Robo Rex was polishing his metal arms until they 
 
 "Beep-boop! Today feels wonderful already," Robo Rex said to himself.
 
-As Robo Rex was organizing his toolbox in his cozy house in the ${place.toLowerCase()}, he heard a knock at his door. When he opened it, he found his friend Ollie the Owl looking rather worried.
+As Robo Rex was organizing his toolbox in his cozy house in the ${placeToUse.toLowerCase()}, he heard a knock at his door. When he opened it, he found his friend Ollie the Owl looking rather worried.
 
-"Robo Rex, we need your help," hooted Ollie. "There's a problem in the ${place.toLowerCase()}. We need someone to ${mission.toLowerCase()} right away!"
+"Robo Rex, we need your help," hooted Ollie. "There's a problem in the ${placeToUse.toLowerCase()}. We need someone to ${missionToUse.toLowerCase()} right away!"
 
 Robo Rex's eyes lit up bright blue with excitement. "I'd be happy to help!" His voice made little clicking sounds between words, something that always happened when he was enthusiastic.
 
@@ -228,7 +250,7 @@ When they arrived, Robo Rex carefully assessed the situation. It definitely woul
 While thinking about the best approach, Robo Rex practiced ${educationalElement}. Learning new things always helped his circuits work better.
 
 ===CHOICE POINT===
-After examining the problem, Robo Rex realized that to ${mission.toLowerCase()}, he would first need to move a large boulder blocking the way.
+After examining the problem, Robo Rex realized that to ${missionToUse.toLowerCase()}, he would first need to move a large boulder blocking the way.
 
 "Hmm, beep-beep," he said, tapping his metal head thoughtfully. "I see two possible solutions."
 
@@ -246,7 +268,7 @@ The boulder was heavier than expected! As Robo Rex strained to lift it, his face
 
 With a final surge of power and a triumphant "BOOP!" Robo Rex placed the boulder in a perfect spot where it could serve as a bench for tired travelers.
 
-The path now clear, Robo Rex was able to ${mission.toLowerCase()}! The other animals cheered for their brave robot friend.
+The path now clear, Robo Rex was able to ${missionToUse.toLowerCase()}! The other animals cheered for their brave robot friend.
 
 Robo Rex's chest panel glowed warmly. He learned that sometimes using your natural strengths is the best way to solve a problem.
 ===END OPTION A OUTCOME===
@@ -258,16 +280,16 @@ Robo Rex's chest panel glowed warmly. He learned that sometimes using your natur
 
 Robo Rex tied one end of a vine around the boulder, then looped the other end over a strong tree branch. "This creates a mechanical advantage," he explained, his voice clicking with excitement about the science involved.
 
-As he worked, Robo Rex counted aloud: "One pulley, two ropes, three knots, four steps to success!" His methodical approach was why everyone in the ${place.toLowerCase()} often sought his help with tricky problems.
+As he worked, Robo Rex counted aloud: "One pulley, two ropes, three knots, four steps to success!" His methodical approach was why everyone in the ${placeToUse.toLowerCase()} often sought his help with tricky problems.
 
 When everything was ready, Robo Rex pulled the rope with a steady, controlled force. His gears whirred happily as the boulder slowly moved aside, clearing the path without any strain.
 
-"Science is wonderful!" Robo Rex beeped joyfully as he successfully completed the mission to ${mission.toLowerCase()}!
+"Science is wonderful!" Robo Rex beeped joyfully as he successfully completed the mission to ${missionToUse.toLowerCase()}!
 
 Everyone was impressed by how Robo Rex had solved the problem using his brainpower instead of just his strength. He learned that sometimes a thoughtful approach works better than raw power.
 ===END OPTION B OUTCOME===
 
-With the mission complete, Robo Rex's heart-light glowed a happy pink color. The animals of the ${place.toLowerCase()} celebrated and thanked their robot friend.
+With the mission complete, Robo Rex's heart-light glowed a happy pink color. The animals of the ${placeToUse.toLowerCase()} celebrated and thanked their robot friend.
 
 Feeling playful, Robo Rex did his famous "robot dance" that always made everyone laugh. His slightly silly movements and beeping sounds had all the younger animals trying to copy him.
 
@@ -286,11 +308,11 @@ Drake was a bit dramatic and loved to boast about his adventures. "I, the MIGHTY
 
 One morning, while Drake was practicing his steam-breathing (it came out pink today!), a turtle named Terence slowly walked up to him.
 
-"Drake," said Terence, "we need your help to ${mission.toLowerCase()} in the ${place.toLowerCase()}!"
+"Drake," said Terence, "we need your help to ${missionToUse.toLowerCase()} in the ${placeToUse.toLowerCase()}!"
 
 "I, the MAGNIFICENT Drake, shall help!" Drake announced loudly, puffing out his chest. But inside, his heart was beating fast with nervousness.
 
-Drake packed a small bag with his favorite snacks (toasted marshmallows) and set off for the ${place.toLowerCase()}.
+Drake packed a small bag with his favorite snacks (toasted marshmallows) and set off for the ${placeToUse.toLowerCase()}.
 
 When Drake arrived, he saw that the task would not be easy. His knees shook a little, but he remembered what his mother always said: "Even scared dragons can be brave."
 
@@ -308,7 +330,7 @@ The friendly birds were happy to help, and together they worked on the mission. 
 
 As they worked, Drake practiced ${educationalElement}. It was fun to learn new things while helping others!
 
-With everyone working together, they managed to ${mission.toLowerCase()}! Drake was so excited that he let out a big puff of rainbow-colored steam that made everyone laugh.
+With everyone working together, they managed to ${missionToUse.toLowerCase()}! Drake was so excited that he let out a big puff of rainbow-colored steam that made everyone laugh.
 
 That night, as Drake curled up in his cozy dragon bed, he thought about his adventure. He learned that ${teachingPoint} and that it's okay to ask for help. He also learned that even small dragons who breathe steam instead of fire can do important things.
 
@@ -325,13 +347,13 @@ ${storyStarter}, a tiny baby named Mila TanTan was having a lovely morning. Her 
 
 Mila giggled and reached for the butterfly. In her baby language of coos and babbles, she seemed curious about what the butterfly had to say.
 
-"We need someone special to help ${mission.toLowerCase()} in the ${place.toLowerCase()}," the butterfly explained. "Would you like to come?"
+"We need someone special to help ${missionToUse.toLowerCase()} in the ${placeToUse.toLowerCase()}," the butterfly explained. "Would you like to come?"
 
 Mila clapped her tiny hands excitedly. This sounded fun!
 
 Before leaving, Mila's mom (who everyone called Mommy Moo) gave her some special milk. Mila drank it all up, feeling strong and ready for her adventure.
 
-When they arrived at the ${place.toLowerCase()}, Mila looked around with wide, curious eyes. The butterfly explained that they needed to ${mission.toLowerCase()}, but it wouldn't be easy.
+When they arrived at the ${placeToUse.toLowerCase()}, Mila looked around with wide, curious eyes. The butterfly explained that they needed to ${missionToUse.toLowerCase()}, but it wouldn't be easy.
 
 Mila wasn't worried. She might be small, but she was brave. When she spotted a problem, she wiggled in excitement, ready to help solve it.
 
@@ -339,7 +361,7 @@ As Mila explored, she practiced ${educationalElement}. Her giggles echoed around
 
 During a rest break, Mila's dad (known as Daddy Doo) appeared to check on her. He gave her a gentle cuddle that made her feel safe and happy. "You're doing great, little one," he said with a proud smile.
 
-With determination and her special baby charm, Mila soon found a way to ${mission.toLowerCase()}! Even the oldest animals in the ${place.toLowerCase()} were amazed.
+With determination and her special baby charm, Mila soon found a way to ${missionToUse.toLowerCase()}! Even the oldest animals in the ${placeToUse.toLowerCase()} were amazed.
 
 "Baby Mila did it!" they cheered. One friendly squirrel commented, "She's just as clever as her cousins! Reminds me of how Liam solved that soccer ball puzzle last week, and little Garyn with those amazing eyelashes who helped us find the missing nuts."
 
@@ -358,17 +380,17 @@ Liam was really good at soccer. He could kick the ball really far and run super 
 
 One bright morning, while Liam was eating breakfast (not Grandpa Bop's yucky healthy food, thankfully!), he heard someone calling his name.
 
-"Liam! Liam!" the voice called. "We need your help to ${mission.toLowerCase()} in the ${place.toLowerCase()}!"
+"Liam! Liam!" the voice called. "We need your help to ${missionToUse.toLowerCase()} in the ${placeToUse.toLowerCase()}!"
 
 "That sounds like an adventure!" said Liam with excitement. He put on his favorite soccer jersey for good luck and grabbed his best blue pickup truck.
 
-When Liam arrived at the ${place.toLowerCase()}, he could see it wouldn't be an easy task. But Liam was brave and ready for anything.
+When Liam arrived at the ${placeToUse.toLowerCase()}, he could see it wouldn't be an easy task. But Liam was brave and ready for anything.
 
 First, Liam tried using his soccer skills to help. He kicked small objects out of the way and showed off his fancy footwork. Then, he used his blue pickup truck to carry important things. It was the perfect tool for the job!
 
 As Liam worked on his mission, he practiced ${educationalElement}. He even made a fun game out of it!
 
-With determination and creativity, Liam was able to ${mission.toLowerCase()}! Everyone was so impressed with his clever ideas.
+With determination and creativity, Liam was able to ${missionToUse.toLowerCase()}! Everyone was so impressed with his clever ideas.
 
 That evening, as Liam told his little brother Garyn all about his adventure, he realized something important. He had learned that ${teachingPoint} makes everyone's day better. He had also learned that being a big brother means being brave and helping others.
 
@@ -385,19 +407,19 @@ Garyn was the little brother of Liam and a cousin to Mila TanTan. He couldn't wa
 
 Every morning, Garyn's mom would sing to him: "He's a Hap-py, Happy Boy, he's a happy happy happy boy!" This always made Garyn giggle and wiggle his tiny toes.
 
-One sunny day, the animals in the ${place.toLowerCase()} were very worried. They needed someone to help ${mission.toLowerCase()}, but didn't know who to ask.
+One sunny day, the animals in the ${placeToUse.toLowerCase()} were very worried. They needed someone to help ${missionToUse.toLowerCase()}, but didn't know who to ask.
 
 A friendly bird flew by and noticed Garyn's bright smile. "Maybe this happy baby can help us!" chirped the bird.
 
 Although Garyn couldn't talk yet, he babbled excitedly, which meant "I'll try!" in baby language.
 
-When they arrived at the ${place.toLowerCase()}, everyone was rushing around trying to solve the problem. Garyn watched with his big eyes, his long eyelashes fluttering with curiosity.
+When they arrived at the ${placeToUse.toLowerCase()}, everyone was rushing around trying to solve the problem. Garyn watched with his big eyes, his long eyelashes fluttering with curiosity.
 
 As the day went on, Garyn practiced ${educationalElement}. He was learning new things every day!
 
 Suddenly, Garyn let out a happy laugh that was so full of joy, it gave everyone a wonderful idea! Sometimes, a fresh perspective is all that's needed.
 
-Working together, using the idea inspired by Garyn's laugh, they were able to ${mission.toLowerCase()}!
+Working together, using the idea inspired by Garyn's laugh, they were able to ${missionToUse.toLowerCase()}!
 
 Garyn's big brother Liam was very proud and gave him a gentle high-five.
 
@@ -416,7 +438,7 @@ ${storyStarter}, a boy named Futa woke up to the sound of birds singing outside 
 
 While eating breakfast, Futa heard a tapping sound at the window. He turned to see a little squirrel that looked just like Chip from his favorite cartoon!
 
-"Futa! We need your help at the ${place.toLowerCase()}," the squirrel chittered. "We need someone to ${mission.toLowerCase()}!"
+"Futa! We need your help at the ${placeToUse.toLowerCase()}," the squirrel chittered. "We need someone to ${missionToUse.toLowerCase()}!"
 
 "Oh wow!" Futa's eyes grew wide with excitement. "A real adventure, just like in my cartoons!"
 
@@ -426,7 +448,7 @@ On his way out, he poked his head into another room. "Mama, I'm going on an adve
 
 "Be back for dinner," his mother replied with a smile. She was arranging alphabet cards on a table—preparing lessons, as she always did. After all, everyone said Yumiko was the best ABC teacher in town.
 
-When Futa arrived at the ${place.toLowerCase()}, he took a deep breath. This mission would be tricky, but he felt ready!
+When Futa arrived at the ${placeToUse.toLowerCase()}, he took a deep breath. This mission would be tricky, but he felt ready!
 
 As he explored, Futa practiced ${educationalElement}. "This is fun!" he said. "I bet Mama would be proud of how I'm learning."
 
@@ -447,7 +469,7 @@ Following the map, Futa walked along a red path, then turned onto a blue one, an
 
 "This map is amazing," Futa said, sipping some of his Mugicha tea to stay refreshed. The warm tea reminded him of home and gave him courage.
 
-With the map's guidance, Futa successfully completed his mission to ${mission.toLowerCase()}! Everyone was amazed at how quickly he'd found the way.
+With the map's guidance, Futa successfully completed his mission to ${missionToUse.toLowerCase()}! Everyone was amazed at how quickly he'd found the way.
 
 Futa learned that sometimes having the right tool makes all the difference when solving problems.
 ===END OPTION A OUTCOME===
@@ -459,7 +481,7 @@ Futa picked up the musical bell and gave it a gentle ring. It made a sweet, twin
 
 "Hello everyone," Futa said, giving a polite bow just like his mama had taught him. "I'm Futa. Would you help me with something important?"
 
-The animals nodded eagerly and led Futa to a beautiful meadow with triangle-shaped flowers growing in a perfect circle. In the center was exactly what Futa needed to ${mission.toLowerCase()}!
+The animals nodded eagerly and led Futa to a beautiful meadow with triangle-shaped flowers growing in a perfect circle. In the center was exactly what Futa needed to ${missionToUse.toLowerCase()}!
 
 When one of the deer offered Futa some water, he politely declined and took a sip of his Mugicha tea instead. "This is my favorite," he explained.
 
@@ -485,20 +507,20 @@ ${storyStarter}, a unicorn named Sparkles was prancing through a field of flower
 
 Sparkles paused to smell a particularly beautiful rose when she heard a small voice calling to her. A little bunny was hopping excitedly nearby.
 
-"Sparkles! We need your help!" the bunny squeaked. "There's a problem in the ${place.toLowerCase()}. We need someone to ${mission.toLowerCase()}!"
+"Sparkles! We need your help!" the bunny squeaked. "There's a problem in the ${placeToUse.toLowerCase()}. We need someone to ${missionToUse.toLowerCase()}!"
 
 Sparkles' eyes sparkled with interest. "That sounds like an adventure!" she said in her gentle voice. Her horn gave a tiny twinkle, which always happened when she was excited about something new.
 
 "I'll help," Sparkles promised, lowering her head so the bunny could climb onto her back for the journey.
 
-As they trotted toward the ${place.toLowerCase()}, Sparkles hummed a happy tune. The bunny noticed how other creatures stopped to watch them pass—everyone loved seeing Sparkles because she brought joy wherever she went.
+As they trotted toward the ${placeToUse.toLowerCase()}, Sparkles hummed a happy tune. The bunny noticed how other creatures stopped to watch them pass—everyone loved seeing Sparkles because she brought joy wherever she went.
 
 When they arrived, Sparkles saw the challenge ahead. It wouldn't be easy, but that didn't worry her. "We can figure this out together," she said confidently.
 
 While exploring the area, Sparkles practiced ${educationalElement}. She loved learning new things and sharing her knowledge with others.
 
 ===CHOICE POINT===
-Soon, Sparkles discovered that to ${mission.toLowerCase()}, she would need to cross a huge rainbow waterfall first. The spray was creating so much mist that it was difficult to see the other side.
+Soon, Sparkles discovered that to ${missionToUse.toLowerCase()}, she would need to cross a huge rainbow waterfall first. The spray was creating so much mist that it was difficult to see the other side.
 
 "What would be the best way to get across?" Sparkles wondered aloud, her horn glowing softly as she thought.
 
@@ -514,7 +536,7 @@ As the sun set and the moon rose high in the sky, the waterfall became gentler, 
 
 Each stone glowed as Sparkles touched it with her hoof: "Red, orange, yellow, green, blue!" she called out, naming each color as she crossed.
 
-On the other side, Sparkles discovered a small hidden cave with walls that sparkled like diamonds. Inside was exactly what she needed to ${mission.toLowerCase()}!
+On the other side, Sparkles discovered a small hidden cave with walls that sparkled like diamonds. Inside was exactly what she needed to ${missionToUse.toLowerCase()}!
 
 "The moon showed us the way," Sparkles said, her horn glowing gently with happiness. She had learned that sometimes waiting for the right moment is better than rushing ahead.
 ===END OPTION A OUTCOME===
@@ -528,12 +550,12 @@ The bunny watched in awe as the colors stretched across the waterfall, weaving t
 
 "It worked!" Sparkles neighed happily, her mane flowing with vibrant colors. "What a beautiful half-circle shape, just like a real rainbow!"
 
-As they crossed the magical bridge, Sparkles' hooves made tiny musical sounds with each step. On the other side, they found a meadow filled with star-shaped flowers, and among them was exactly what they needed to ${mission.toLowerCase()}!
+As they crossed the magical bridge, Sparkles' hooves made tiny musical sounds with each step. On the other side, they found a meadow filled with star-shaped flowers, and among them was exactly what they needed to ${missionToUse.toLowerCase()}!
 
 The magic from Sparkles' horn had not only created a bridge but had also illuminated a hidden path that led them exactly where they needed to go. Sparkles learned that using your special talents can open unexpected paths to success.
 ===END OPTION B OUTCOME===
 
-With the mission complete, Sparkles gave a joyful leap into the air, her mane catching the light and sending tiny rainbows dancing across the ${place.toLowerCase()}.
+With the mission complete, Sparkles gave a joyful leap into the air, her mane catching the light and sending tiny rainbows dancing across the ${placeToUse.toLowerCase()}.
 
 "We did it!" she neighed happily. Her horn gave an extra bright twinkle of celebration.
 
@@ -551,14 +573,25 @@ The end. Would you like to go on another adventure with Sparkles? Or are you rea
 
 export async function POST(request: Request) {
   try {
-    const { hero, place, mission, lifeSkill } = await request.json();
+    const { hero, place, mission, lifeSkill, additionalHeroes } = await request.json();
 
-    console.log('Generating story with:', { hero, place, mission, lifeSkill });
+    // Log what we're generating, treating empty strings as null to enable creative generation
+    const placeToUse = place || null;
+    const missionToUse = mission || null;
+    
+    console.log('Generating story with:', { 
+      hero, 
+      place: placeToUse ? placeToUse : 'Open for AI creativity', 
+      mission: missionToUse ? missionToUse : 'Open for AI creativity', 
+      lifeSkill, 
+      additionalHeroes 
+    });
 
     // If OpenAI is disabled, skip the API call attempt
     if (!ENABLE_OPENAI) {
       console.log('Using built-in storyteller (OpenAI disabled)');
-      const story = generateBuiltInStory(hero, place, mission, lifeSkill);
+      // Note: built-in storyteller doesn't yet support additionalHeroes, but that's fine for demo
+      const story = generateBuiltInStory(hero, placeToUse, missionToUse, lifeSkill);
       return NextResponse.json({ 
         story,
         // Don't show the fallback message since this is the intended behavior
@@ -570,7 +603,8 @@ export async function POST(request: Request) {
       console.log('Attempting to call OpenAI API directly...');
       
       // Use our direct API call implementation
-      const story = await generateOpenAIStory(hero, place, mission, lifeSkill);
+      // When place or mission are null, OpenAI will generate its own creative settings and adventures
+      const story = await generateOpenAIStory(hero, placeToUse, missionToUse, lifeSkill, additionalHeroes);
       console.log('Story generated successfully with OpenAI');
 
       // Return the generated story
@@ -581,7 +615,7 @@ export async function POST(request: Request) {
       console.log('Falling back to built-in storyteller');
       
       // Fall back to the built-in generator if OpenAI fails
-      const fallbackStory = generateBuiltInStory(hero, place, mission, lifeSkill);
+      const fallbackStory = generateBuiltInStory(hero, placeToUse, missionToUse, lifeSkill);
       
       return NextResponse.json({ 
         story: fallbackStory,

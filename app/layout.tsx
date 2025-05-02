@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Baloo_2, Nunito, Poppins, Varela_Round } from "next/font/google";
+import { Baloo_2, Nunito, Poppins, Varela_Round, Comic_Neue } from "next/font/google";
 import "./globals.css";
 import ScrollAnimations from "./components/ScrollAnimations";
 
@@ -32,6 +32,13 @@ const poppins = Poppins({
   display: "swap",
 });
 
+const comicNeue = Comic_Neue({
+  subsets: ["latin"],
+  weight: ["300", "400", "700"],
+  variable: "--font-comic-neue",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Magic Story Buddy",
   description: "Magical, personalized bedtime stories for kids ages 3–5",
@@ -43,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`h-full ${baloo.variable} ${nunito.variable} ${poppins.variable} ${varelaRound.variable}`}>
+    <html lang="en" className={`h-full ${baloo.variable} ${nunito.variable} ${poppins.variable} ${varelaRound.variable} ${comicNeue.variable}`}>
       <body className="font-nunito antialiased h-full">
         <ScrollAnimations />
         {children}

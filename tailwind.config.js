@@ -14,6 +14,7 @@ module.exports = {
         baloo: ['var(--font-baloo)'],
         poppins: ['var(--font-poppins)'],
         rounded: ['var(--font-varela-round)'],
+        comic: ['var(--font-comic-neue)'],
       },
     },
   },
