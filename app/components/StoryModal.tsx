@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface StoryModalProps {
@@ -12,12 +12,33 @@ interface StoryModalProps {
   lifeSkill?: string;
 }
 
+// Interface for the story choice options
+interface StoryChoice {
+  optionA: string;
+  optionB: string;
+  emojiA: string;
+  emojiB: string;
+  outcomeA: string;
+  outcomeB: string;
+}
+
 export default function StoryModal({ isOpen, onClose, hero, place, mission, lifeSkill }: StoryModalProps) {
   const [story, setStory] = useState<string>('');
   const [generating, setGenerating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [usedFallback, setUsedFallback] = useState<boolean>(false);
   const [showNewAdventureOptions, setShowNewAdventureOptions] = useState<boolean>(false);
+  
+  // New state for the choose your own path feature
+  const [storyBeforeChoice, setStoryBeforeChoice] = useState<string>('');
+  const [storyChoice, setStoryChoice] = useState<StoryChoice | null>(null);
+  const [selectedOption, setSelectedOption] = useState<'A' | 'B' | null>(null);
+  const [storyAfterChoice, setStoryAfterChoice] = useState<string>('');
+  const [atChoicePoint, setAtChoicePoint] = useState<boolean>(false);
+  
+  // Audio refs for sound effects
+  const hoverSoundRef = useRef<HTMLAudioElement | null>(null);
+  const clickSoundRef = useRef<HTMLAudioElement | null>(null);
   
   // State for editing parameters
   const [newHero, setNewHero] = useState<string>(hero);
@@ -49,6 +70,89 @@ export default function StoryModal({ isOpen, onClose, hero, place, mission, life
     setCurrentLifeSkill(lifeSkill || '');
     setShowNewAdventureOptions(false);
   }, [hero, place, mission, lifeSkill, isOpen]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      hoverSoundRef.current = new Audio('/sounds/hover.mp3');
+      clickSoundRef.current = new Audio('/sounds/click.mp3');
+      
+      // Optional: Preload the audio
+      hoverSoundRef.current.load();
+      clickSoundRef.current.load();
+    }
+  }, []);
+  
+  // Play sound functions
+  const playHoverSound = () => {
+    if (hoverSoundRef.current) {
+      hoverSoundRef.current.currentTime = 0;
+      hoverSoundRef.current.play().catch(e => console.log('Audio play failed:', e));
+    }
+  };
+  
+  const playClickSound = () => {
+    if (clickSoundRef.current) {
+      clickSoundRef.current.currentTime = 0;
+      clickSoundRef.current.play().catch(e => console.log('Audio play failed:', e));
+    }
+  };
+  
+  // Function to handle option selection
+  const handleOptionSelect = (option: 'A' | 'B') => {
+    playClickSound();
+    setSelectedOption(option);
+  };
+
+  // Render the choice confirmation with animation
+  const renderChoiceConfirmation = () => {
+    if (!storyChoice) return null;
+    
+    const selectedChoiceText = selectedOption === 'A' ? storyChoice.optionA : storyChoice.optionB;
+    const selectedEmoji = selectedOption === 'A' ? storyChoice.emojiA : storyChoice.emojiB;
+    const bgColor = selectedOption === 'A' ? 'from-pink-200 to-pink-100' : 'from-teal-200 to-teal-100';
+    const textColor = selectedOption === 'A' ? 'text-pink-800' : 'text-teal-800';
+    
+    return (
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="my-6 flex flex-col items-center"
+      >
+        <div className={`w-20 h-20 bg-gradient-to-br ${bgColor} rounded-full flex items-center justify-center shadow-md mb-2`}>
+          <motion.div
+            initial={{ scale: 1.2 }}
+            animate={{ scale: 1 }}
+            transition={{ 
+              type: "spring",
+              stiffness: 300,
+              damping: 20
+            }}
+          >
+            <motion.div
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{
+                repeat: Infinity,
+                duration: 2,
+                ease: "easeInOut"
+              }}
+              className="text-5xl"
+            >
+              {selectedEmoji}
+            </motion.div>
+          </motion.div>
+        </div>
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className={`text-xl font-medium font-baloo ${textColor} text-center mb-6`}
+        >
+          You chose {selectedChoiceText}!
+        </motion.div>
+      </motion.div>
+    );
+  };
 
   async function generateStory(useNewParams: boolean = false) {
     setGenerating(true);
@@ -120,6 +224,9 @@ export default function StoryModal({ isOpen, onClose, hero, place, mission, life
 
       setStory(data.story);
       setUsedFallback(data.usedFallback || false);
+      
+      // Process the story to extract the choice point
+      processStoryForChoicePoint(data.story);
     } catch (err: any) {
       console.error('Error generating story:', err);
       setError(err.message || 'Sorry, we had trouble creating your story. Please try again!');
@@ -127,6 +234,415 @@ export default function StoryModal({ isOpen, onClose, hero, place, mission, life
       setGenerating(false);
     }
   }
+
+  // Process the story to extract the choice point
+  const processStoryForChoicePoint = (storyText: string) => {
+    // Reset choice state
+    setSelectedOption(null);
+    setAtChoicePoint(false);
+    
+    // First check for the new formatted markers
+    const choicePointStart = storyText.indexOf("===CHOICE POINT===");
+    const choicePointEnd = storyText.indexOf("===END CHOICE POINT===");
+    const optionAStart = storyText.indexOf("===OPTION A OUTCOME===");
+    const optionAEnd = storyText.indexOf("===END OPTION A OUTCOME===");
+    const optionBStart = storyText.indexOf("===OPTION B OUTCOME===");
+    const optionBEnd = storyText.indexOf("===END OPTION B OUTCOME===");
+    
+    // Check if we have the formatted markers
+    if (choicePointStart !== -1 && choicePointEnd !== -1 && 
+        optionAStart !== -1 && optionAEnd !== -1 && 
+        optionBStart !== -1 && optionBEnd !== -1) {
+      
+      // Extract the story segments
+      const storyBefore = storyText.substring(0, choicePointStart);
+      const choiceText = storyText.substring(choicePointStart + 18, choicePointEnd).trim();
+      const optionAOutcome = storyText.substring(optionAStart + 21, optionAEnd).trim();
+      const optionBOutcome = storyText.substring(optionBStart + 21, optionBEnd).trim();
+      
+      // Check if there's content after the last outcome marker
+      const lastEndMarker = Math.max(optionAEnd + 24, optionBEnd + 24);
+      const storyAfter = lastEndMarker < storyText.length ? storyText.substring(lastEndMarker) : "";
+      
+      // Extract the options from the choice text
+      // Look for "Should they [Option A] or [Option B]?" pattern
+      const optionPattern = /Should .+ \[(.+?)\] or \[(.+?)\]\?/i;
+      const optionMatch = choiceText.match(optionPattern);
+      
+      let optionA = "First choice";
+      let optionB = "Second choice";
+      
+      if (optionMatch && optionMatch.length >= 3) {
+        optionA = optionMatch[1].trim();
+        optionB = optionMatch[2].trim();
+      } else {
+        // Try a fallback pattern for "Should they X or Y?"
+        const shouldMatch = choiceText.match(/Should .+ (.+?) or (.+?)\?/i);
+        if (shouldMatch && shouldMatch.length >= 3) {
+          optionA = shouldMatch[1].trim();
+          optionB = shouldMatch[2].trim();
+        } else {
+          // Try a more general pattern for any choice with "or"
+          const orSplit = choiceText.split(" or ");
+          if (orSplit.length >= 2) {
+            // Try to extract from "Should they... X or Y?" format
+            const firstPart = orSplit[0];
+            const shouldMatch = firstPart.match(/Should .+ (.+)$/i);
+            if (shouldMatch) {
+              optionA = shouldMatch[1].trim();
+            }
+            
+            // Get the second option
+            const secondPart = orSplit[1];
+            const questionMatch = secondPart.match(/^(.+?)\?/i);
+            if (questionMatch) {
+              optionB = questionMatch[1].trim();
+            }
+          }
+        }
+      }
+      
+      // Determine appropriate emojis
+      let emojiA = '🌈';
+      let emojiB = '✨';
+      
+      // Determine emojis based on the content of options - expanded set of mappings
+      // Animals and creatures - specific characters first (high priority)
+      if (optionA.toLowerCase().includes('dragon')) emojiA = '🐉';
+      if (optionA.toLowerCase().includes('owl')) emojiA = '🦉';
+      if (optionA.toLowerCase().includes('butterfly')) emojiA = '🦋';
+      if (optionA.toLowerCase().includes('animal')) emojiA = '🐾';
+      if (optionA.toLowerCase().includes('bug')) emojiA = '🦋';
+      
+      // Places and containers - specific places first
+      if (optionA.toLowerCase().includes('door')) emojiA = '🚪';
+      if (optionA.toLowerCase().includes('tent')) emojiA = '⛺';
+      if (optionA.toLowerCase().includes('inside')) emojiA = '🏠';
+      if (optionA.toLowerCase().includes('rainbow')) emojiA = '🌈';
+      
+      // Environmental elements
+      if (optionA.toLowerCase().includes('flower') || optionA.toLowerCase().includes('garden')) emojiA = '🌸';
+      if (optionA.toLowerCase().includes('path') || optionA.toLowerCase().includes('road')) emojiA = '🛣️';
+      if (optionA.toLowerCase().includes('tunnel') || optionA.toLowerCase().includes('cave')) emojiA = '🕳️';
+      if (optionA.toLowerCase().includes('forest') || optionA.toLowerCase().includes('tree')) emojiA = '🌲';
+      if (optionA.toLowerCase().includes('bridge')) emojiA = '🌉';
+      if (optionA.toLowerCase().includes('waterfall')) emojiA = '🌊';
+      if (optionA.toLowerCase().includes('water') || optionA.toLowerCase().includes('river')) emojiA = '💧';
+      if (optionA.toLowerCase().includes('mountain')) emojiA = '⛰️';
+      if (optionA.toLowerCase().includes('meadow')) emojiA = '🌿';
+      if (optionA.toLowerCase().includes('night') || optionA.toLowerCase().includes('moon')) emojiA = '🌙';
+      if (optionA.toLowerCase().includes('sun') || optionA.toLowerCase().includes('day')) emojiA = '☀️';
+      
+      // Actions and approaches
+      if (optionA.toLowerCase().includes('magic') || optionA.toLowerCase().includes('spell')) emojiA = '✨';
+      if (optionA.toLowerCase().includes('wait')) emojiA = '⏳';
+      if (optionA.toLowerCase().includes('sing') || optionA.toLowerCase().includes('music')) emojiA = '🎵';
+      if (optionA.toLowerCase().includes('dance')) emojiA = '💃';
+      if (optionA.toLowerCase().includes('ask') || optionA.toLowerCase().includes('help')) emojiA = '🙋';
+      if (optionA.toLowerCase().includes('quiet') || optionA.toLowerCase().includes('sneaky')) emojiA = '🤫';
+      if (optionA.toLowerCase().includes('brave') || optionA.toLowerCase().includes('direct')) emojiA = '🦸';
+      if (optionA.toLowerCase().includes('logic') || optionA.toLowerCase().includes('think')) emojiA = '🧠';
+      if (optionA.toLowerCase().includes('create') || optionA.toLowerCase().includes('art')) emojiA = '🎨';
+      if (optionA.toLowerCase().includes('climb')) emojiA = '🧗';
+      
+      // Tools (lowest priority)
+      if (optionA.toLowerCase().includes('map')) emojiA = '🗺️';
+      if (optionA.toLowerCase().includes('key')) emojiA = '🔑';
+      if (optionA.toLowerCase().includes('bell')) emojiA = '🔔';
+      if (optionA.toLowerCase().includes('build') || optionA.toLowerCase().includes('make')) emojiA = '🛠️';
+      if (optionA.toLowerCase().includes('pulley') || optionA.toLowerCase().includes('rope')) emojiA = '⚙️';
+      if (optionA.toLowerCase().includes('strong') || optionA.toLowerCase().includes('strength')) emojiA = '💪';
+      if (optionA.toLowerCase().includes('arm')) emojiA = '💪';
+      
+      // Repeat the same comprehensive mapping for option B with the same priority ordering
+      // Animals and creatures - specific characters first (high priority)
+      if (optionB.toLowerCase().includes('dragon')) emojiB = '🐉';
+      if (optionB.toLowerCase().includes('owl')) emojiB = '🦉';
+      if (optionB.toLowerCase().includes('butterfly')) emojiB = '🦋';
+      if (optionB.toLowerCase().includes('animal')) emojiB = '🐾';
+      if (optionB.toLowerCase().includes('bug')) emojiB = '🦋';
+      
+      // Places and containers - specific places first
+      if (optionB.toLowerCase().includes('door')) emojiB = '🚪';
+      if (optionB.toLowerCase().includes('tent')) emojiB = '⛺';
+      if (optionB.toLowerCase().includes('under')) emojiB = '⬇️';
+      if (optionB.toLowerCase().includes('wagon')) emojiB = '🚃';
+      if (optionB.toLowerCase().includes('rainbow')) emojiB = '🌈';
+      
+      // Environmental elements
+      if (optionB.toLowerCase().includes('flower') || optionB.toLowerCase().includes('garden')) emojiB = '🌸';
+      if (optionB.toLowerCase().includes('path') || optionB.toLowerCase().includes('road')) emojiB = '🛣️';
+      if (optionB.toLowerCase().includes('tunnel') || optionB.toLowerCase().includes('cave')) emojiB = '🕳️';
+      if (optionB.toLowerCase().includes('forest') || optionB.toLowerCase().includes('tree')) emojiB = '🌲';
+      if (optionB.toLowerCase().includes('bridge')) emojiB = '🌉';
+      if (optionB.toLowerCase().includes('waterfall')) emojiB = '🌊';
+      if (optionB.toLowerCase().includes('water') || optionB.toLowerCase().includes('river')) emojiB = '💧';
+      if (optionB.toLowerCase().includes('mountain')) emojiB = '⛰️';
+      if (optionB.toLowerCase().includes('meadow')) emojiB = '🌿';
+      if (optionB.toLowerCase().includes('night') || optionB.toLowerCase().includes('moon')) emojiB = '🌙';
+      if (optionB.toLowerCase().includes('sun') || optionB.toLowerCase().includes('day')) emojiB = '☀️';
+      
+      // Actions and approaches
+      if (optionB.toLowerCase().includes('magic') || optionB.toLowerCase().includes('spell')) emojiB = '✨';
+      if (optionB.toLowerCase().includes('wait')) emojiB = '⏳';
+      if (optionB.toLowerCase().includes('sing') || optionB.toLowerCase().includes('music')) emojiB = '🎵';
+      if (optionB.toLowerCase().includes('dance')) emojiB = '💃';
+      if (optionB.toLowerCase().includes('ask') || optionB.toLowerCase().includes('help')) emojiB = '🙋';
+      if (optionB.toLowerCase().includes('quiet') || optionB.toLowerCase().includes('sneaky')) emojiB = '🤫';
+      if (optionB.toLowerCase().includes('brave') || optionB.toLowerCase().includes('direct')) emojiB = '🦸';
+      if (optionB.toLowerCase().includes('logic') || optionB.toLowerCase().includes('think')) emojiB = '🧠';
+      if (optionB.toLowerCase().includes('create') || optionB.toLowerCase().includes('art')) emojiB = '🎨';
+      if (optionB.toLowerCase().includes('climb')) emojiB = '🧗';
+      
+      // Tools (lowest priority)
+      if (optionB.toLowerCase().includes('map')) emojiB = '🗺️';
+      if (optionB.toLowerCase().includes('key')) emojiB = '🔑';
+      if (optionB.toLowerCase().includes('bell')) emojiB = '🔔';
+      if (optionB.toLowerCase().includes('build') || optionB.toLowerCase().includes('make')) emojiB = '🛠️';
+      if (optionB.toLowerCase().includes('pulley') || optionB.toLowerCase().includes('rope')) emojiB = '⚙️';
+      if (optionB.toLowerCase().includes('strong') || optionB.toLowerCase().includes('strength')) emojiB = '💪';
+      if (optionB.toLowerCase().includes('arm')) emojiB = '💪';
+      
+      setStoryBeforeChoice(storyBefore + choiceText);
+      setStoryChoice({
+        optionA,
+        optionB,
+        emojiA,
+        emojiB,
+        outcomeA: optionAOutcome,
+        outcomeB: optionBOutcome
+      });
+      setStoryAfterChoice(storyAfter);
+      setAtChoicePoint(true);
+      
+      // Since we found and processed the choice markers, we need to
+      // remove the markers from the main story text to prevent them
+      // from being displayed directly
+      const filteredStory = storyBefore + storyAfter;
+      setStory(filteredStory);
+      
+      return;
+    }
+    
+    // If no formatted markers, fall back to the previous approach
+    // Try different patterns to find the choice point
+    
+    // Pattern 1: Look for the choice pattern with asterisks: *Should [character] [do something]?*
+    let choiceMatch = storyText.match(/\*Should .+\?\*/);
+    
+    // Pattern 2: Look for "Which way should [character] go?" or similar
+    if (!choiceMatch) {
+      choiceMatch = storyText.match(/Which (way|path|option|choice) should [^\?]+\?/);
+    }
+    
+    // Pattern 3: Look for a direct question about choice
+    if (!choiceMatch) {
+      choiceMatch = storyText.match(/Should (he|she|they|[A-Z][a-z]+) (choose|take|go|pick|select) [^\?]+\?/);
+    }
+    
+    if (!choiceMatch || choiceMatch.index === undefined) {
+      // No choice found, just display the whole story
+      setStoryBeforeChoice('');
+      setStoryChoice(null);
+      setStoryAfterChoice('');
+      return;
+    }
+    
+    const choiceIndex = choiceMatch.index;
+    const choiceText = choiceMatch[0];
+    
+    // Find the two options
+    // Look for text like "On one side was..." or similar patterns
+    const beforeChoiceText = storyText.substring(0, choiceIndex);
+    
+    // To find where the outcome starts, look for paragraph after the choice
+    const afterChoiceIndex = choiceIndex + choiceText.length;
+    const remainingText = storyText.substring(afterChoiceIndex);
+    
+    // Find the next paragraph break after the choice
+    let paragraphBreakIndex = remainingText.indexOf("\n\n");
+    if (paragraphBreakIndex === -1) {
+      // Try a single newline if double isn't found
+      paragraphBreakIndex = remainingText.indexOf("\n");
+    }
+    
+    if (paragraphBreakIndex === -1) {
+      // Couldn't find clean separation, just show the whole story
+      return;
+    }
+    
+    // Extract the options paragraph
+    const optionsParagraph = remainingText.substring(0, paragraphBreakIndex);
+    
+    // Extract the outcome and rest of the story
+    const outcomeAndRest = remainingText.substring(paragraphBreakIndex + 2);
+    
+    // Parse the options - try multiple patterns
+    // Look for "Option A... Option B..." pattern or similar patterns
+    let optionAMatch = optionsParagraph.match(/(On one side|The first option|The first path|One way|To the left|Option A) was (a |the |)([^.]+)\./i);
+    let optionBMatch = optionsParagraph.match(/(On the other side|The second option|The second path|Another way|To the right|Option B) was (a |the |)([^.]+)\./i);
+    
+    // Try another common pattern
+    if (!optionAMatch || !optionBMatch) {
+      // Try to find any two distinct options in the same paragraph
+      const options = optionsParagraph.split(/\.\s+/);
+      if (options.length >= 2) {
+        // Just take the first two sentences as options
+        optionAMatch = options[0].match(/(.+)/);
+        optionBMatch = options[1].match(/(.+)/);
+      }
+    }
+    
+    if (!optionAMatch || !optionBMatch) {
+      // As a fallback, create generic options
+      optionAMatch = ["Option A", "", "", "First choice"];
+      optionBMatch = ["Option B", "", "", "Second choice"];
+    }
+    
+    // Extract the options
+    const optionA = optionAMatch[3] ? optionAMatch[3].trim() : "First choice";
+    const optionB = optionBMatch[3] ? optionBMatch[3].trim() : "Second choice";
+    
+    // Find the outcome paragraph - it's the paragraph that starts after the options
+    // and explains what the character chose
+    let outcomeMatch = outcomeAndRest.match(/([^ ]+ (thought|decided|chose))/i);
+    
+    // Try alternative outcome patterns if the first one didn't work
+    if (!outcomeMatch) {
+      outcomeMatch = outcomeAndRest.match(/(picked|selected|took|went with)/i);
+    }
+    
+    if (!outcomeMatch) {
+      // Couldn't find a clean outcome, assume it starts immediately after options
+      outcomeMatch = outcomeAndRest.match(/(.{0,50})/i);
+    }
+    
+    if (!outcomeMatch) {
+      // Couldn't find outcome, just show the whole story
+      return;
+    }
+    
+    // Split at the outcome to separate the outcome from the rest of the story
+    const outcomeSplitIndex = outcomeAndRest.indexOf(outcomeMatch[0]);
+    const outcome = outcomeAndRest.substring(0, outcomeSplitIndex + 150); // Include some context
+    const restOfStory = outcomeAndRest.substring(outcomeSplitIndex);
+    
+    // Set up the choice interface
+    setStoryBeforeChoice(beforeChoiceText + choiceText);
+    
+    // Assign emojis based on the options
+    let emojiA = '🌈';
+    let emojiB = '✨';
+    
+    // Determine emojis based on the content of options - expanded set of mappings
+    // Animals and creatures - specific characters first (high priority)
+    if (optionA.toLowerCase().includes('dragon')) emojiA = '🐉';
+    if (optionA.toLowerCase().includes('owl')) emojiA = '🦉';
+    if (optionA.toLowerCase().includes('butterfly')) emojiA = '🦋';
+    if (optionA.toLowerCase().includes('animal')) emojiA = '🐾';
+    if (optionA.toLowerCase().includes('bug')) emojiA = '🦋';
+    
+    // Places and containers - specific places first
+    if (optionA.toLowerCase().includes('door')) emojiA = '🚪';
+    if (optionA.toLowerCase().includes('tent')) emojiA = '⛺';
+    if (optionA.toLowerCase().includes('inside')) emojiA = '🏠';
+    if (optionA.toLowerCase().includes('rainbow')) emojiA = '🌈';
+    
+    // Environmental elements
+    if (optionA.toLowerCase().includes('flower') || optionA.toLowerCase().includes('garden')) emojiA = '🌸';
+    if (optionA.toLowerCase().includes('path') || optionA.toLowerCase().includes('road')) emojiA = '🛣️';
+    if (optionA.toLowerCase().includes('tunnel') || optionA.toLowerCase().includes('cave')) emojiA = '🕳️';
+    if (optionA.toLowerCase().includes('forest') || optionA.toLowerCase().includes('tree')) emojiA = '🌲';
+    if (optionA.toLowerCase().includes('bridge')) emojiA = '🌉';
+    if (optionA.toLowerCase().includes('waterfall')) emojiA = '🌊';
+    if (optionA.toLowerCase().includes('water') || optionA.toLowerCase().includes('river')) emojiA = '💧';
+    if (optionA.toLowerCase().includes('mountain')) emojiA = '⛰️';
+    if (optionA.toLowerCase().includes('meadow')) emojiA = '🌿';
+    if (optionA.toLowerCase().includes('night') || optionA.toLowerCase().includes('moon')) emojiA = '🌙';
+    if (optionA.toLowerCase().includes('sun') || optionA.toLowerCase().includes('day')) emojiA = '☀️';
+    
+    // Actions and approaches
+    if (optionA.toLowerCase().includes('magic') || optionA.toLowerCase().includes('spell')) emojiA = '✨';
+    if (optionA.toLowerCase().includes('wait')) emojiA = '⏳';
+    if (optionA.toLowerCase().includes('sing') || optionA.toLowerCase().includes('music')) emojiA = '🎵';
+    if (optionA.toLowerCase().includes('dance')) emojiA = '💃';
+    if (optionA.toLowerCase().includes('ask') || optionA.toLowerCase().includes('help')) emojiA = '🙋';
+    if (optionA.toLowerCase().includes('quiet') || optionA.toLowerCase().includes('sneaky')) emojiA = '🤫';
+    if (optionA.toLowerCase().includes('brave') || optionA.toLowerCase().includes('direct')) emojiA = '🦸';
+    if (optionA.toLowerCase().includes('logic') || optionA.toLowerCase().includes('think')) emojiA = '🧠';
+    if (optionA.toLowerCase().includes('create') || optionA.toLowerCase().includes('art')) emojiA = '🎨';
+    if (optionA.toLowerCase().includes('climb')) emojiA = '🧗';
+    
+    // Tools (lowest priority)
+    if (optionA.toLowerCase().includes('map')) emojiA = '🗺️';
+    if (optionA.toLowerCase().includes('key')) emojiA = '🔑';
+    if (optionA.toLowerCase().includes('bell')) emojiA = '🔔';
+    if (optionA.toLowerCase().includes('build') || optionA.toLowerCase().includes('make')) emojiA = '🛠️';
+    if (optionA.toLowerCase().includes('pulley') || optionA.toLowerCase().includes('rope')) emojiA = '⚙️';
+    if (optionA.toLowerCase().includes('strong') || optionA.toLowerCase().includes('strength')) emojiA = '💪';
+    if (optionA.toLowerCase().includes('arm')) emojiA = '💪';
+    
+    // Repeat the same comprehensive mapping for option B with the same priority ordering
+    // Animals and creatures - specific characters first (high priority)
+    if (optionB.toLowerCase().includes('dragon')) emojiB = '🐉';
+    if (optionB.toLowerCase().includes('owl')) emojiB = '🦉';
+    if (optionB.toLowerCase().includes('butterfly')) emojiB = '🦋';
+    if (optionB.toLowerCase().includes('animal')) emojiB = '🐾';
+    if (optionB.toLowerCase().includes('bug')) emojiB = '🦋';
+    
+    // Places and containers - specific places first
+    if (optionB.toLowerCase().includes('door')) emojiB = '🚪';
+    if (optionB.toLowerCase().includes('tent')) emojiB = '⛺';
+    if (optionB.toLowerCase().includes('under')) emojiB = '⬇️';
+    if (optionB.toLowerCase().includes('wagon')) emojiB = '🚃';
+    if (optionB.toLowerCase().includes('rainbow')) emojiB = '🌈';
+    
+    // Environmental elements
+    if (optionB.toLowerCase().includes('flower') || optionB.toLowerCase().includes('garden')) emojiB = '🌸';
+    if (optionB.toLowerCase().includes('path') || optionB.toLowerCase().includes('road')) emojiB = '🛣️';
+    if (optionB.toLowerCase().includes('tunnel') || optionB.toLowerCase().includes('cave')) emojiB = '🕳️';
+    if (optionB.toLowerCase().includes('forest') || optionB.toLowerCase().includes('tree')) emojiB = '🌲';
+    if (optionB.toLowerCase().includes('bridge')) emojiB = '🌉';
+    if (optionB.toLowerCase().includes('waterfall')) emojiB = '🌊';
+    if (optionB.toLowerCase().includes('water') || optionB.toLowerCase().includes('river')) emojiB = '💧';
+    if (optionB.toLowerCase().includes('mountain')) emojiB = '⛰️';
+    if (optionB.toLowerCase().includes('meadow')) emojiB = '🌿';
+    if (optionB.toLowerCase().includes('night') || optionB.toLowerCase().includes('moon')) emojiB = '🌙';
+    if (optionB.toLowerCase().includes('sun') || optionB.toLowerCase().includes('day')) emojiB = '☀️';
+    
+    // Actions and approaches
+    if (optionB.toLowerCase().includes('magic') || optionB.toLowerCase().includes('spell')) emojiB = '✨';
+    if (optionB.toLowerCase().includes('wait')) emojiB = '⏳';
+    if (optionB.toLowerCase().includes('sing') || optionB.toLowerCase().includes('music')) emojiB = '🎵';
+    if (optionB.toLowerCase().includes('dance')) emojiB = '💃';
+    if (optionB.toLowerCase().includes('ask') || optionB.toLowerCase().includes('help')) emojiB = '🙋';
+    if (optionB.toLowerCase().includes('quiet') || optionB.toLowerCase().includes('sneaky')) emojiB = '🤫';
+    if (optionB.toLowerCase().includes('brave') || optionB.toLowerCase().includes('direct')) emojiB = '🦸';
+    if (optionB.toLowerCase().includes('logic') || optionB.toLowerCase().includes('think')) emojiB = '🧠';
+    if (optionB.toLowerCase().includes('create') || optionB.toLowerCase().includes('art')) emojiB = '🎨';
+    if (optionB.toLowerCase().includes('climb')) emojiB = '🧗';
+    
+    // Tools (lowest priority)
+    if (optionB.toLowerCase().includes('map')) emojiB = '🗺️';
+    if (optionB.toLowerCase().includes('key')) emojiB = '🔑';
+    if (optionB.toLowerCase().includes('bell')) emojiB = '🔔';
+    if (optionB.toLowerCase().includes('build') || optionB.toLowerCase().includes('make')) emojiB = '🛠️';
+    if (optionB.toLowerCase().includes('pulley') || optionB.toLowerCase().includes('rope')) emojiB = '⚙️';
+    if (optionB.toLowerCase().includes('strong') || optionB.toLowerCase().includes('strength')) emojiB = '💪';
+    if (optionB.toLowerCase().includes('arm')) emojiB = '💪';
+    
+    setStoryChoice({
+      optionA,
+      optionB,
+      emojiA,
+      emojiB,
+      outcomeA: outcome, // We'll use the same outcome for both since we don't know which is which
+      outcomeB: outcome
+    });
+    
+    setStoryAfterChoice(restOfStory);
+    setAtChoicePoint(true);
+  };
 
   // For demonstration purposes, if there's an error, let's provide a sample story
   // so users can still see the functionality
@@ -141,9 +657,13 @@ export default function StoryModal({ isOpen, onClose, hero, place, mission, life
       'Futa': "Once upon a time, there was a 5-year-old boy named Futa. Futa had bright eyes and loved watching Chip and Dale cartoons. He enjoyed drinking warm Mugicha tea but didn't like water very much. His mama Yumiko was the best ABC teacher in the whole wide world! One day, in the " + currentPlace + ", everyone needed help to " + currentMission.toLowerCase() + ". \"I can help!\" said Futa happily. He packed his favorite Mugicha tea (but no water!) and set off on an adventure. When he arrived at the " + currentPlace + ", Futa had to make a choice between taking a path through pretty flowers or crawling through a tunnel made of twisty tree roots. Futa chose the flower path and met a friendly squirrel who looked just like Chip from his cartoon! Together with his new friend, Futa was able to " + currentMission.toLowerCase() + "! Everyone cheered and thanked him. When Futa got home, his mama Yumiko made him his favorite tea and listened to his adventure story. Futa learned that being brave and helping others makes everyone happy. The end. Would you like to go on another adventure with Futa? Or are you ready to join Futa in Dreamland?"
     };
 
-    setStory(fallbackStories[currentHero] || fallbackStories['Sparkles']);
+    const fallbackStory = fallbackStories[currentHero] || fallbackStories['Sparkles'];
+    setStory(fallbackStory);
     setError(null);
     setUsedFallback(true);
+    
+    // Process the fallback story for choice points too
+    processStoryForChoicePoint(fallbackStory);
   };
 
   // Get emoji for place
@@ -402,10 +922,88 @@ export default function StoryModal({ isOpen, onClose, hero, place, mission, life
                     </div>
                   )}
                   <div className="whitespace-pre-wrap font-nunito leading-relaxed text-lg">
-                    {story}
+                    {atChoicePoint ? (
+                      <>
+                        {/* Display story before the choice */}
+                        <div>{storyBeforeChoice}</div>
+                        
+                        {/* Display the options as big emoji buttons */}
+                        {!selectedOption && storyChoice && (
+                          <div className="my-10 py-8 px-4 bg-gradient-to-br from-amber-50/80 to-orange-50/50 rounded-xl border border-amber-100/50 shadow-inner">
+                            <div className="text-center mb-6">
+                              <h3 className="font-baloo text-2xl text-amber-700 mb-2">Choose wisely!</h3>
+                              <p className="text-amber-600/90 text-sm italic max-w-md mx-auto">Your decision will change the path of the story...</p>
+                            </div>
+                            <div className="flex flex-col sm:flex-row justify-center gap-8 sm:gap-16">
+                              <motion.button 
+                                whileHover={{ 
+                                  scale: 1.05, 
+                                  y: -8,
+                                  transition: { 
+                                    type: "spring", 
+                                    stiffness: 300, 
+                                    damping: 10 
+                                  }
+                                }}
+                                className="choice-option focus:outline-none group"
+                                onClick={() => handleOptionSelect('A')}
+                                onMouseEnter={playHoverSound}
+                              >
+                                <div className="w-28 sm:w-36 h-28 sm:h-36 bg-gradient-to-br from-pink-100 to-pink-200 rounded-full flex items-center justify-center text-6xl sm:text-7xl mb-3 shadow-md group-hover:shadow-lg group-hover:shadow-pink-200/30 transition-all duration-300 border-2 border-pink-300/40">
+                                  {storyChoice.emojiA}
+                                </div>
+                                <div className="text-center font-medium text-lg px-6 py-2 bg-pink-100/80 rounded-xl text-pink-900 shadow-sm max-w-[200px] whitespace-normal break-words min-h-[4rem] flex items-center justify-center">{storyChoice.optionA}</div>
+                              </motion.button>
+                              
+                              <motion.button 
+                                whileHover={{ 
+                                  scale: 1.05, 
+                                  y: -8,
+                                  transition: { 
+                                    type: "spring", 
+                                    stiffness: 300, 
+                                    damping: 10 
+                                  }
+                                }}
+                                className="choice-option focus:outline-none group"
+                                onClick={() => handleOptionSelect('B')}
+                                onMouseEnter={playHoverSound}
+                              >
+                                <div className="w-28 sm:w-36 h-28 sm:h-36 bg-gradient-to-br from-teal-100 to-teal-200 rounded-full flex items-center justify-center text-6xl sm:text-7xl mb-3 shadow-md group-hover:shadow-lg group-hover:shadow-teal-200/30 transition-all duration-300 border-2 border-teal-300/40">
+                                  {storyChoice.emojiB}
+                                </div>
+                                <div className="text-center font-medium text-lg px-6 py-2 bg-teal-100/80 rounded-xl text-teal-900 shadow-sm max-w-[200px] whitespace-normal break-words min-h-[4rem] flex items-center justify-center">{storyChoice.optionB}</div>
+                              </motion.button>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Display the outcome based on the selected option */}
+                        {selectedOption && storyChoice && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ 
+                              duration: 0.8,
+                              type: "spring",
+                              stiffness: 100,
+                              damping: 15
+                            }}
+                          >
+                            {renderChoiceConfirmation()}
+                            <div className="mt-4">{selectedOption === 'A' ? storyChoice.outcomeA : storyChoice.outcomeB}</div>
+                            <div>{storyAfterChoice}</div>
+                          </motion.div>
+                        )}
+                      </>
+                    ) : (
+                      // Display the full story if not at a choice point
+                      <>{story}</>
+                    )}
                   </div>
                   
-                  {story.includes("Would you like to go on another adventure") && (
+                  {/* Show adventure options only if we're at the end of the story */}
+                  {!atChoicePoint && story.includes("Would you like to go on another adventure") && (
                     <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
                       <button
                         onClick={() => setShowNewAdventureOptions(true)}

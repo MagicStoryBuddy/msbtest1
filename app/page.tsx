@@ -97,33 +97,29 @@ export default function Home() {
               </h1>
               
               <p className="text-2xl sm:text-3xl text-secondary-foreground font-nunito tracking-wide leading-relaxed max-w-3xl">
-                One app. Infinite adventures. Magical, personalized bedtime stories for kids ages 3–5.
+                Pick a Buddy. Pick a Place. Make a Magic Story!
               </p>
               
               <div className="mt-8 mb-10 w-full max-w-2xl bg-gradient-to-br from-primary/20 to-accent/30 backdrop-blur-sm rounded-2xl p-8 border border-primary/30 shadow-lg">
-                <p className="text-xl sm:text-2xl text-foreground font-medium mb-8 leading-relaxed font-nunito">
-                  Magic Story Buddy helps kids build their own bedtime stories – one choice at a time.
-                </p>
-
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <a
-                    href="/dashboard" 
+                  <a
+                    href="#make-story" 
                     className="rounded-full bg-indigo-700 py-4 px-6 text-white font-medium text-lg flex items-center justify-center gap-2 hover:bg-indigo-800 transition shadow-md sparkle-button font-poppins"
-          >
+                  >
                     <span className="text-yellow-200">⭐</span> Try a Demo Story
-          </a>
-          <a
+                  </a>
+                  <a
                     href="/auth/signup" 
                     className="rounded-full bg-blue-200 py-4 px-6 text-indigo-800 font-medium text-lg flex items-center justify-center gap-2 hover:bg-blue-300 transition shadow-md sparkle-button font-poppins"
                   >
                     <span>📱</span> Join Early Access List
-          </a>
-        </div>
+                  </a>
+                </div>
               </div>
               
-              {/* How it Works Section */}
-              <div className="w-full max-w-4xl bg-gradient-to-b from-background/60 to-background/80 rounded-2xl p-10 border border-primary/20 shadow-md mt-10 mb-8 reveal-on-scroll fade-in delay-100">
-                <h3 className="text-4xl sm:text-5xl font-semibold text-primary mb-10 text-center font-baloo">How It Works</h3>
+              {/* Let's Make a Magic Story section */}
+              <div id="make-story" className="w-full max-w-4xl bg-gradient-to-b from-background/60 to-background/80 rounded-2xl p-10 border border-primary/20 shadow-md mt-10 mb-8 reveal-on-scroll fade-in delay-100">
+                <h3 className="text-4xl sm:text-5xl font-semibold text-primary mb-10 text-center font-baloo">Let's Make a Magic Story!</h3>
                 
                 <div className="flex flex-col md:flex-row gap-10 justify-between">
                   <div className="flex-1 flex flex-col items-center text-center">
