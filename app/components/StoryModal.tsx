@@ -116,6 +116,11 @@ export default function StoryModal({ isOpen, onClose, hero, place, mission, life
     { name: "Gratitude", emoji: "🙏" }
   ];
   
+  // Add new state for PDF generation
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState<boolean>(false);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [pdfError, setPdfError] = useState<string | null>(null);
+  
   useEffect(() => {
     if (isOpen && hero) {
       generateStory();
@@ -350,6 +355,11 @@ export default function StoryModal({ isOpen, onClose, hero, place, mission, life
       const enhancedStory = enhanceStoryWithEmojis(data.story);
       setStory(enhancedStory);
       setUsedFallback(data.usedFallback || false);
+      
+      console.log('Story generated successfully!', { 
+        length: enhancedStory.length,
+        hasContent: !!enhancedStory 
+      });
       
       // Process the story to extract the choice point
       processStoryForChoicePoint(enhancedStory);
@@ -1163,6 +1173,128 @@ export default function StoryModal({ isOpen, onClose, hero, place, mission, life
     );
   };
 
+  // Function to generate PDF with illustrations
+  const generatePDF = async () => {
+    if (!story) {
+      console.error('Cannot generate PDF - no story content');
+      return;
+    }
+    
+    console.log('Starting PDF generation...');
+    setIsGeneratingPDF(true);
+    setPdfUrl(null);
+    setPdfError(null);
+    
+    try {
+      // Get the complete story text (depending on where we are in the story flow)
+      let completeStory = story;
+      
+      if (atChoicePoint && selectedOption && storyChoice) {
+        // For choice-based stories, combine the parts with the selected outcome
+        const outcome = selectedOption === 'A' ? storyChoice.outcomeA : storyChoice.outcomeB;
+        completeStory = storyBeforeChoice + ' ' + outcome + ' ' + storyAfterChoice;
+      }
+      
+      console.log('Sending story to PDF generation API...');
+      
+      // Send the request to the API
+      const response = await fetch('/api/generate-story-pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          story: completeStory,
+          hero: currentHero,
+          place: currentPlace || 'magical world',
+          mission: currentMission || 'adventure',
+          lifeSkill: currentLifeSkill,
+          additionalHeroes: currentAdditionalHeroes
+        }),
+      });
+      
+      const data = await response.json();
+      console.log('PDF API response:', data);
+      
+      if (!response.ok) {
+        throw new Error(data.error || data.message || 'Failed to generate PDF');
+      }
+      
+      if (!data.pdfUrl) {
+        throw new Error('No PDF URL returned');
+      }
+      
+      console.log('PDF generated successfully, URL:', data.pdfUrl);
+      setPdfUrl(data.pdfUrl);
+      
+      // Automatically open the PDF in a new tab
+      if (typeof window !== 'undefined' && data.pdfUrl) {
+        window.open(data.pdfUrl, '_blank');
+      }
+    } catch (err: any) {
+      console.error('Error generating PDF:', err);
+      setPdfError(err.message || 'Sorry, we had trouble creating your storybook PDF. Please try again!');
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
+  
+  // Render the PDF button
+  const renderPDFButton = () => {
+    if (!story) return null;
+    
+    if (isGeneratingPDF) {
+      return (
+        <div className="inline-flex flex-col items-center">
+          <div className="inline-flex items-center gap-2 px-5 py-3 bg-indigo-100 text-indigo-700 rounded-lg mb-2">
+            <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            <span className="font-medium">Creating storybook...</span>
+          </div>
+          <p className="text-xs text-gray-500">This may take 30-60 seconds as we're creating beautiful illustrations</p>
+        </div>
+      );
+    }
+    
+    if (pdfUrl) {
+      return (
+        <a 
+          href={pdfUrl}
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-5 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium shadow-md"
+        >
+          <span>📕</span> Open Your Storybook PDF
+        </a>
+      );
+    }
+    
+    if (pdfError) {
+      return (
+        <div className="flex flex-col items-center gap-2">
+          <div className="text-red-500 text-sm mb-1 max-w-xs text-center">{pdfError}</div>
+          <button
+            onClick={generatePDF}
+            className="inline-flex items-center gap-2 px-5 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium shadow-md"
+          >
+            <span>🔄</span> Try Again
+          </button>
+        </div>
+      );
+    }
+    
+    return (
+      <button
+        onClick={() => {
+          console.log('PDF button clicked');
+          generatePDF();
+        }}
+        className="inline-flex items-center gap-2 px-5 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium shadow-md sparkle-button"
+      >
+        <span>📕</span> Create PDF Storybook with AI Illustrations
+      </button>
+    );
+  };
+
   return (
     <>
       <AnimatePresence>
@@ -1562,6 +1694,51 @@ export default function StoryModal({ isOpen, onClose, hero, place, mission, life
                       )}
                     </div>
                     
+                    {/* Add prominent PDF Storybook button section */}
+                    {story && !generating && !showNewAdventureOptions && (
+                      <div className="mt-6 mb-8 flex flex-col items-center justify-center">
+                        <div className="w-full max-w-md border-t border-b border-indigo-200 py-4 text-center">
+                          <h3 className="text-lg font-baloo text-indigo-700 mb-3">Create a Beautiful PDF Storybook!</h3>
+                          {isGeneratingPDF ? (
+                            <div className="inline-flex flex-col items-center">
+                              <div className="inline-flex items-center gap-2 px-5 py-3 bg-indigo-100 text-indigo-700 rounded-lg mb-2">
+                                <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                                <span className="font-medium">Creating storybook...</span>
+                              </div>
+                              <p className="text-xs text-gray-500">This may take 30-60 seconds as we're creating beautiful illustrations</p>
+                            </div>
+                          ) : pdfUrl ? (
+                            <a 
+                              href={pdfUrl}
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium shadow-md"
+                            >
+                              <span className="text-xl">📕</span> Open Your Storybook PDF
+                            </a>
+                          ) : pdfError ? (
+                            <div className="flex flex-col items-center gap-2">
+                              <div className="text-red-500 text-sm mb-1 max-w-xs text-center">{pdfError}</div>
+                              <button
+                                onClick={generatePDF}
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium shadow-md"
+                              >
+                                <span>🔄</span> Try Again
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={generatePDF}
+                              className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium shadow-md group hover:scale-105 transition-transform"
+                            >
+                              <span className="text-xl group-hover:animate-bounce">📕</span> 
+                              <span>Create PDF Storybook with AI Illustrations</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    
                     {/* Show adventure options only if we're at the end of the story */}
                     {!atChoicePoint && story.includes("Would you like to go on another adventure") && (
                       <div className="flex flex-col sm:flex-row gap-3 justify-center mt-8">
@@ -1589,13 +1766,42 @@ export default function StoryModal({ isOpen, onClose, hero, place, mission, life
 
               <div className="mt-6 flex justify-between">
                 {!showNewAdventureOptions && (
-                  <button
-                    onClick={() => generateStory()}
-                    disabled={generating}
-                    className="px-5 py-2.5 bg-gradient-to-r from-primary to-accent text-white rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 font-medium"
-                  >
-                    {generating ? 'Generating...' : '✨ New Story'}
-                  </button>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => generateStory()}
+                      disabled={generating}
+                      className="px-5 py-2.5 bg-gradient-to-r from-primary to-accent text-white rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 font-medium"
+                    >
+                      {generating ? 'Generating...' : '✨ New Story'}
+                    </button>
+                    
+                    {story && !generating && (
+                      <button
+                        onClick={generatePDF}
+                        className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium shadow-md flex items-center gap-2"
+                      >
+                        <span>📕</span> Create PDF Storybook
+                      </button>
+                    )}
+                    
+                    {isGeneratingPDF && (
+                      <div className="px-5 py-2.5 bg-indigo-100 text-indigo-700 rounded-lg font-medium shadow-md flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                        <span>Creating PDF...</span>
+                      </div>
+                    )}
+                    
+                    {pdfUrl && (
+                      <a 
+                        href={pdfUrl}
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="px-5 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium shadow-md flex items-center gap-2"
+                      >
+                        <span>📕</span> View PDF
+                      </a>
+                    )}
+                  </div>
                 )}
                 
                 <button
