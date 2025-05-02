@@ -19,7 +19,8 @@ export default function Home() {
     { name: "Sparkles", emoji: "🦄" },
     { name: "Mila TanTan", emoji: "👶" },
     { name: "Liam", emoji: "👦" },
-    { name: "Garyn", emoji: "👶🏼" }
+    { name: "Garyn", emoji: "👶🏼" },
+    { name: "Futa", emoji: "👦🏻" }
   ];
   
   const places = [

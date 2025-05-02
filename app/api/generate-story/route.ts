@@ -53,6 +53,10 @@ Please write the story using gentle, cozy language with simple sentence structur
 
 The story should have a clear beginning, middle, and end structure, with a satisfying resolution to the mission.
 
+IMPORTANT: At some point in the middle of the story, include one "choose your own path" moment where the child can choose between two simple options (e.g., "take the rainbow bridge path" or "dance a jig to open the magic door"). Present both options clearly, then continue the story as if one option was chosen.
+
+Use whimsical, cozy, simple English throughout the story.
+
 End the story with "The end. Would you like to go on another adventure with [CHARACTER NAME]? Or are you ready to join [CHARACTER NAME] in Dreamland?"
 `;
 
@@ -173,6 +177,16 @@ When Robo Rex arrived at the ${place.toLowerCase()}, he saw the task would not b
 
 "I will try my best," said Robo Rex with a determined beep.
 
+As Robo Rex was working on his mission, he came to a fork in the path. 
+
+"Oh my circuits!" beeped Robo Rex. "Which way should I go?"
+
+On the left was a path through a field of colorful flowers. On the right was a tunnel made of shiny metal pipes.
+
+*Should Robo Rex take the flowery path or the metal tunnel?*
+
+Robo Rex thought carefully and chose the metal tunnel. It reminded him of home! Inside the tunnel, Robo Rex found special gears that helped him complete his mission.
+
 First, Robo Rex tried using his extendable robot arms. Then, he used his special robot vision to see hidden things. Finally, he asked his friends to help because even brave robots need help sometimes.
 
 Together, they worked and worked until... they did it! They managed to ${mission.toLowerCase()}!
@@ -186,33 +200,41 @@ That night, as Robo Rex got ready for sleep mode, he thought about his day. He l
 The end. Would you like to go on another adventure with Robo Rex? Or are you ready to join Robo Rex in Dreamland?`;
   } 
   else if (hero.includes('Drake')) {
-    storyTemplate = `# Drake the Dragon's Colorful Day
+    storyTemplate = `# Drake's Big Adventure
 
-${storyStarter}, there was a small dragon named Drake. Drake was the smallest dragon in his family, and he couldn't breathe fire like his brothers and sisters. Instead, when Drake tried to roar, colorful steam puffed from his nose!
+${storyStarter}, there was a small dragon named Drake. Drake was the smallest dragon in his family, and he couldn't breathe fire like his brothers and sisters - only colorful steam!
 
-Drake lived in a cozy cave near the ${place.toLowerCase()}.
+Drake was a bit dramatic and loved to boast about his adventures. "I, the MIGHTY Drake, am the bravest dragon ever!" he would announce. But secretly, Drake was a little scared of many things, like loud noises and dark caves.
 
-"Oh dear, oh my!" Drake would often say when he was nervous, which was quite often indeed.
+One morning, while Drake was practicing his steam-breathing (it came out pink today!), a turtle named Terence slowly walked up to him.
 
-One bright morning, the ${place.toLowerCase()} was buzzing with excitement. Everyone was talking about how someone needed to ${mission.toLowerCase()}.
+"Drake," said Terence, "we need your help to ${mission.toLowerCase()} in the ${place.toLowerCase()}!"
 
-"M-m-me?" stammered Drake when the other animals asked for his help. "But I'm just a small dragon who can't even breathe fire!"
+"I, the MAGNIFICENT Drake, shall help!" Drake announced loudly, puffing out his chest. But inside, his heart was beating fast with nervousness.
 
-"Your colorful steam might be just what we need," said Tilly the Turtle kindly.
+Drake packed a small bag with his favorite snacks (toasted marshmallows) and set off for the ${place.toLowerCase()}.
 
-Drake wasn't sure, but he wanted to be brave. "I'll try my best," he said, puffing out a little purple steam.
+When Drake arrived, he saw that the task would not be easy. His knees shook a little, but he remembered what his mother always said: "Even scared dragons can be brave."
 
-Drake set off on his mission, his little dragon heart beating fast. Whenever he felt scared, he would take deep breaths, sending beautiful rainbow steam swirling around him.
+As Drake was figuring out what to do, he came across two different ways to solve the problem.
 
-As Drake worked on his mission to ${mission.toLowerCase()}, he discovered something amazing! His colorful steam was perfect for the job. It could reach high places, it could make patterns, and it made everyone smile!
+"Oh scales!" exclaimed Drake. "Which way should I choose?"
 
-By the end of the day, Drake had completed his mission. Everyone cheered!
+He could either climb up the tall, wobbly ladder to reach the high shelf, or he could ask the birds to help fly things down to him.
 
-"Three cheers for Drake!" they shouted.
+*Should Drake climb the wobbly ladder or ask the birds for help?*
 
-That night, as Drake curled up in his cozy cave, he thought about what he had learned. Being different wasn't bad at all. And he had also learned that ${teachingPoint} makes everyone's day better.
+Drake thought about it and decided to ask the birds for help. Even though he wanted to show he could do it alone, Drake remembered that teamwork often makes things easier.
 
-"Oh happy day," Drake whispered as he drifted off to sleep, a tiny wisp of pink steam floating above his head.
+The friendly birds were happy to help, and together they worked on the mission. Drake used his colorful steam to signal directions to the birds. Pink puffs meant "go left" and blue puffs meant "go right."
+
+As they worked, Drake practiced ${educationalElement}. It was fun to learn new things while helping others!
+
+With everyone working together, they managed to ${mission.toLowerCase()}! Drake was so excited that he let out a big puff of rainbow-colored steam that made everyone laugh.
+
+That night, as Drake curled up in his cozy dragon bed, he thought about his adventure. He learned that ${teachingPoint} and that it's okay to ask for help. He also learned that even small dragons who breathe steam instead of fire can do important things.
+
+"I, the SLEEPY Drake, had a wonderful day," he whispered as he closed his eyes.
 
 The end. Would you like to go on another adventure with Drake? Or are you ready to join Drake in Dreamland?`;
   } 
@@ -302,6 +324,47 @@ That night, as Garyn drifted off to sleep, his mom sang his special song. Garyn 
 With a tiny yawn, Garyn closed his eyes, his long eyelashes resting against his cheeks.
 
 The end. Would you like to go on another adventure with Garyn? Or are you ready to join Garyn in Dreamland?`;
+  }
+  else if (hero.includes('Futa')) {
+    storyTemplate = `# Futa's Amazing Adventure
+
+${storyStarter}, there was a cheerful 5-year-old boy named Futa. Futa had a big smile and bright, curious eyes that sparkled when he was excited.
+
+Futa loved watching Chip and Dale cartoons and drinking warm Mugicha tea. He didn't like water very much, especially for swimming or baths. His mama Yumiko was the very best ABC teacher in the whole wide world, and Futa was very proud of her.
+
+One sunny morning, while Futa was sipping his favorite Mugicha tea from his special cup, he heard a gentle tap on the window. It was a little squirrel who looked just like Chip from his favorite cartoon!
+
+"Futa! Futa!" chittered the squirrel. "We need your help to ${mission.toLowerCase()} in the ${place.toLowerCase()}!"
+
+"Oh wow!" said Futa, his eyes growing wide with excitement. "Just like in my Chip and Dale show!"
+
+So Futa put on his adventure shoes and packed his backpack with a small bottle of Mugicha tea (but no water!). He was ready for an adventure!
+
+When Futa arrived at the ${place.toLowerCase()}, he saw that it would be a tricky task. But Futa was brave and clever, just like his mama Yumiko always said.
+
+As Futa explored the ${place.toLowerCase()}, he practiced ${educationalElement}. Learning was fun, especially when it was part of an adventure!
+
+Soon, Futa came to a crossroads in his journey. 
+
+"Oh!" said Futa, looking at two different paths ahead. "Which way should I go?"
+
+On one side was a path with pretty flowers that smelled sweet like honey. On the other side was a tunnel made of twisty tree roots that looked like a fun maze.
+
+*Should Futa take the flower path or the root tunnel?*
+
+Futa thought about what his mama Yumiko might say and decided on the flower path. As he walked, colorful butterflies danced around him, showing him the way forward.
+
+Using his kindness and clever thinking, Futa managed to ${mission.toLowerCase()}! Everyone in the ${place.toLowerCase()} cheered and thanked him.
+
+"You're welcome!" said Futa with a big smile. "My mama Yumiko says helping others makes the world better!"
+
+That evening, when Futa got home, his mama made him his favorite Mugicha tea and listened to his exciting adventure story.
+
+"I learned that ${teachingPoint} is important," said Futa thoughtfully, sipping his tea.
+
+As Futa snuggled into bed that night, he dreamed of new adventures with his friends Chip and Dale, exploring magical places and helping others.
+
+The end. Would you like to go on another adventure with Futa? Or are you ready to join Futa in Dreamland?`;
   }
   else {
     storyTemplate = `# Sparkles the Unicorn's Magical Journey
