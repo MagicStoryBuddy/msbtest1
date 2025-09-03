@@ -1,40 +1,62 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { OpenAI } from 'openai';
 
-// API Key for OpenAI
-const API_KEY = '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';
+function getOpenAIKey(): string | null {
+  return process.env.OPENAI_API_KEY ?? null;
+}
 
-// Initialize OpenAI with the provided API key (with fallback)
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || API_KEY,
-});
+function requireOpenAIKey(): string {
+  const key = getOpenAIKey();
+  if (!key) {
+    throw new Error(
+      'OPENAI_API_KEY is not set. Add it to .env.local (for dev) and Vercel → Project → Settings → Environment Variables (for prod).'
+    );
+  }
+  return key;
+}
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
-    console.log('Testing OpenAI API connection...');
-    console.log('API Key (first 12 chars):', (process.env.OPENAI_API_KEY || API_KEY).substring(0, 12) + '...');
-    
-    // Simple test request to OpenAI
+    const key = getOpenAIKey();
+    if (!key) {
+      return NextResponse.json(
+        { success: false, message: 'OPENAI_API_KEY not configured.' },
+        { status: 500 }
+      );
+    }
+
+    const openai = new OpenAI({ apiKey: requireOpenAIKey() });
+
+    console.log('Testing OpenAI API connection…');
+
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        { role: "user", content: "Say hello!" }
-      ],
+      model: 'gpt-4o',
+      messages: [{ role: 'user', content: 'Say hello!' }],
       max_tokens: 10,
     });
-    
-    const content = response.choices[0]?.message?.content;
-    
-    return NextResponse.json({ 
-      success: true, 
+
+    const content = response?.choices?.[0]?.message?.content ?? '[no content]';
+
+    return NextResponse.json({
+      success: true,
       message: 'OpenAI API connection successful!',
-      response: content
+      response: content,
     });
   } catch (error: any) {
-    console.error('Error testing OpenAI connection:', error);
-    return NextResponse.json({ 
-      success: false, 
-      error: error.message || 'Failed to connect to OpenAI API' 
-    }, { status: 500 });
+    console.error('Error testing OpenAI connection:', error?.message || error);
+    if (/(401|unauthorized|invalid api key|authentication)/i.test(String(error?.message))) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            'Authentication failed. Check that OPENAI_API_KEY is set and valid (standard keys required for chat).',
+        },
+        { status: 401 }
+      );
+    }
+    return NextResponse.json(
+      { success: false, message: error?.message || 'Failed to connect to OpenAI API' },
+      { status: 500 }
+    );
   }
-} 
+}

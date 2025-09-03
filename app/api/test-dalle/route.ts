@@ -1,55 +1,74 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { OpenAI } from 'openai';
 
-// API Key for OpenAI
-const API_KEY = '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';
+function getOpenAIKey(): string | null {
+  return process.env.OPENAI_API_KEY ?? null;
+}
 
-// Initialize OpenAI with the provided API key (with fallback)
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || API_KEY,
-});
+function requireOpenAIKey(): string {
+  const k = getOpenAIKey();
+  if (!k) {
+    throw new Error('OPENAI_API_KEY is not set. Add it to .env.local (dev) and Vercel → Project → Settings → Environment Variables (prod).');
+  }
+  return k;
+}
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
-    console.log('Testing DALL-E API connection...');
-    console.log('Using API key (first 12 chars):', (process.env.OPENAI_API_KEY || API_KEY).substring(0, 12) + '...');
-    
-    // For project API keys that don't have DALL-E access, return a mock success
-    if ((process.env.OPENAI_API_KEY || API_KEY).startsWith('sk-proj-')) {
-      console.log('Detected project API key, which typically does not have DALL-E access');
-      return NextResponse.json({ 
-        success: false, 
-        message: 'Using project API key which does not have DALL-E access.',
-        mockImageUrl: 'https://placeholder.com/1024x1024'
+    const key = getOpenAIKey();
+    if (!key) {
+      return NextResponse.json(
+        { success: false, message: 'OPENAI_API_KEY not configured.' },
+        { status: 500 }
+      );
+    }
+
+    // Heads-up for project-scoped keys (often no image access)
+    if (key.startsWith('sk-proj-')) {
+      return NextResponse.json({
+        success: false,
+        message: 'Project-scoped key detected. DALL·E access is typically unavailable for project keys. Use a standard API key or skip this test.',
       });
     }
-    
-    // Simple test request to DALL-E
+
+    // Create client lazily with the env key
+    const openai = new OpenAI({ apiKey: requireOpenAIKey() });
+
+    // Minimal image generation sanity check
     const response = await openai.images.generate({
-      model: "dall-e-3",
-      prompt: "A simple test image of a cute cartoon rabbit",
+      model: 'dall-e-3',
+      prompt: 'A simple test image of a cute cartoon rabbit',
       n: 1,
-      size: "1024x1024",
-      quality: "standard",
-      response_format: "url",
+      size: '1024x1024',
+      quality: 'standard',
+      response_format: 'url',
     });
-    
-    const imageUrl = response.data && response.data[0]?.url;
-    
+
+    const imageUrl = response?.data?.[0]?.url;
     if (!imageUrl) {
-      throw new Error('No image URL returned');
+      return NextResponse.json(
+        { success: false, message: 'No image URL returned from DALL·E.' },
+        { status: 502 }
+      );
     }
-    
-    return NextResponse.json({ 
-      success: true, 
-      message: 'DALL-E API connection successful!',
-      imageUrl: imageUrl
+
+    return NextResponse.json({
+      success: true,
+      message: 'DALL·E API connection successful!',
+      imageUrl,
     });
   } catch (error: any) {
-    console.error('Error testing DALL-E connection:', error);
-    return NextResponse.json({ 
-      success: false, 
-      error: error.message || 'Failed to connect to DALL-E API' 
-    }, { status: 500 });
+    console.error('Error testing DALL·E connection:', error?.message || error);
+    // Helpful auth hint
+    if (/(unauthorized|401|invalid api key|authentication)/i.test(String(error?.message))) {
+      return NextResponse.json(
+        { success: false, message: 'Authentication failed. Check OPENAI_API_KEY (standard key required for images).' },
+        { status: 401 }
+      );
+    }
+    return NextResponse.json(
+      { success: false, message: error?.message || 'Failed to connect to DALL·E API' },
+      { status: 500 }
+    );
   }
-} 
+}
