@@ -141,32 +141,10 @@ function generateBuiltInStory(
   lifeSkill?: string
 ): string {
   const randomPlaces = [
-    "Castle","Forest","Ocean","Candy Land","Silly Circus",
-    "Rainbow Cloud Island","Enchanted Garden","Bug World",
-    "Snowy Mountain","Crystal Caves","Dino Land","Dragon Valley",
-    "Friendly Ghost Town","Unicorn Fields",
-    "Bubble Kingdom","Cloud City","Marshmallow Mountains",
-    "Talking Tree Village","Moonlight Meadow","Starshine Beach",
-    "Whispering Waterfall","Giggling Garden","Cookie Canyon",
-    "Dream Desert","Purple Planet","Singing Sea","Telescope Tower",
-    "Bouncy Balloon Land","Jelly Jungle","Glowing Geyser Valley"
+    "Castle","Forest","Candy Land","Dino Land"
   ];
   const randomMissions = [
-    "Find Treasure","Help a Friend","Build a Tower","Solve a Mystery",
-    "Explore a Secret Tunnel","Follow a Map to Adventure","Collect Sparkle Stones",
-    "Cheer Someone Up","Plan a Surprise Party","Clean up",
-    "Deliver a Special Letter","Find Something That was Lost","Tame a Baby Dragon",
-    "Find the Missing Song Notes","Paint a Picture that Comes to Life",
-    "Help Someone Learn the Alphabet","Count the Stars","Grow a Magic Garden",
-    "Help Birds Build a Nest","Find Firefly Light for the Lantern Festival",
-    "Rescue a Cloud That Can't Rain","Find the Lost Rainbow Colors",
-    "Help the Sun and Moon Become Friends","Teach the Stars How to Twinkle",
-    "Find the Cure for a Sad Flower","Discover Why the Wind is Whispering",
-    "Reunite a Baby Comet with Its Family","Solve the Mystery of the Dancing Shoes",
-    "Help the Shy Shadow Learn to Play","Find the Recipe for Happiness Cookies",
-    "Discover Why the Books Won't Tell Their Stories","Find the Lost Lullaby",
-    "Help the Thunder Learn to Be Quieter","Teach the Echo How to Say New Words",
-    "Find the Magic That Makes Bubbles Pop"
+    "Find Treasure","Help a Friend","Solve a Mystery","Paint a Picture that Comes to Life","Tame a Baby Dragon"
   ];
 
   const placeToUse = place || randomPlaces[Math.floor(Math.random() * randomPlaces.length)];
@@ -177,9 +155,7 @@ function generateBuiltInStory(
     teachingPoint = lifeSkill.toLowerCase();
   } else {
     const teachingPoints = [
-      'sharing is caring','being patient','trying your best','being kind to others',
-      'helping friends','telling the truth','being brave when scared','listening to grown-ups',
-      'tidying up after playtime','saying please and thank you'
+      'bravery','dealing with anger','kindness','shyness','patience','brushing teeth','focus and attention','gratitude'
     ];
     teachingPoint = teachingPoints[Math.floor(Math.random() * teachingPoints.length)];
   }
@@ -205,20 +181,230 @@ function generateBuiltInStory(
 
   let storyTemplate = '';
 
-  // (Your character-specific branches remain the same; omitted here for brevity)
-  // KEEP all your existing hero-specific templates exactly as you had them.
-  // --- BEGIN your existing templates ---
-  // ... [PASTE all your hero branches here unchanged]
-  // --- END your existing templates ---
+  // Character-specific branches (rebuilt premade templates)
+  const heroName = hero.trim().toLowerCase();
 
-  // If none matched, fallback (your Sparkles template was here; keep it)
+  if (heroName.includes('robo') || heroName === 'robo rex' || heroName.includes('rex')) {
+    storyTemplate = `# Robo Rex and the ${missionToUse} in the ${placeToUse}
+
+${storyStarter}, there was a friendly robot dinosaur named Robo Rex who loved helping friends. His metal plates were shiny silver, and his eyes glowed a warm blue when he smiled.
+
+Today, Robo Rex had a mission: ${missionToUse.toLowerCase()}. He zipped his little rocket-wheels across the ${placeToUse.toLowerCase()}, counting gears and bolts as he went for ${educationalElement}.
+
+Robo Rex remembered to practice ${teachingPoint}, which makes adventures smoother. He took a deep breath and beeped a cheerful tune.
+
+===CHOICE POINT===
+Should he scan the path with his rainbow radar, or ask the tiny robo-birds to scout ahead?
+===END CHOICE POINT===
+
+===OPTION A OUTCOME===
+Robo Rex used his rainbow radar. Beep-beep! The colors showed a safe path in red, blue, and yellow. He followed the red line up a gentle hill and spotted a clue: a shiny bolt pointing toward the goal.
+===END OPTION A OUTCOME===
+
+===OPTION B OUTCOME===
+Robo Rex asked the tiny robo-birds for help. They chirped a musical code and circled in a triangle, guiding him left, then right, then straight. Teamwork made the tricky parts easy!
+===END OPTION B OUTCOME===
+
+At last, Robo Rex completed the ${missionToUse.toLowerCase()} with careful steps and ${teachingPoint}. He waved to his friends and powered down to a cozy hum.
+
+${ending}
+
+The end. Would you like to go on another adventure with Robo Rex? Or are you ready to join Robo Rex in Dreamland?`;
+  } else if (heroName.includes('drake') || heroName.includes('dragon')) {
+    storyTemplate = `# Drake the Dragon's ${missionToUse}
+
+${storyStarter}, in the ${placeToUse}, lived a gentle dragon named Drake. His scales shimmered green and gold, and he loved painting clouds in the sky.
+
+Drake’s mission today was ${missionToUse.toLowerCase()}. He flapped his wings slowly, practicing ${educationalElement} along the way.
+
+Drake knew that practicing ${teachingPoint} would help him make good choices.
+
+===CHOICE POINT===
+Should Drake follow the sparkling river, or glide above the tall trees to look for a sign?
+===END CHOICE POINT===
+
+===OPTION A OUTCOME===
+Drake followed the sparkling river. He counted ripples—one, two, three, four, five—and spotted a rainbow fish pointing him forward with a flick of its tail.
+===END OPTION A OUTCOME===
+
+===OPTION B OUTCOME===
+Drake soared above the tall trees. From high up, he saw a circle, a square, and a triangle formed by clearings below—shapes marking the path to success.
+===END OPTION B OUTCOME===
+
+With a happy roar (a quiet one), Drake completed the ${missionToUse.toLowerCase()} and shared the joy with his forest friends.
+
+${ending}
+
+The end. Would you like to go on another adventure with Drake? Or are you ready to join Drake in Dreamland?`;} else if (heroName.includes('sparkles') || heroName.includes('unicorn')) {
+    storyTemplate = `# Sparkles the Unicorn's Magical ${missionToUse}
+
+${storyStarter}, Sparkles pranced through the ${placeToUse}, her mane shifting colors like a rainbow—red, blue, green, and yellow.
+
+Her mission today was ${missionToUse.toLowerCase()}. She trotted lightly, whispering, "I can do this by ${teachingPoint}."
+
+===CHOICE POINT===
+Should Sparkles follow the trail of glitter, or listen for the singing flowers to guide her?
+===END CHOICE POINT===
+
+===OPTION A OUTCOME===
+Sparkles followed the glitter. It twinkled in a line—sparkle, sparkle, sparkle—leading her to a kind fairy who pointed the way with a smile.
+===END OPTION A OUTCOME===
+
+===OPTION B OUTCOME===
+Sparkles listened carefully. The flowers sang a gentle counting song from one to five, and she stepped from bloom to bloom until she reached her goal.
+===END OPTION B OUTCOME===
+
+With a soft nuzzle and a happy skip, Sparkles finished the ${missionToUse.toLowerCase()} and shared her joy with friends.
+
+${ending}
+
+The end. Would you like to go on another adventure with Sparkles? Or are you ready to join Sparkles in Dreamland?`;
+  } else if (heroName.includes('mila')) {
+    storyTemplate = `# Mila TanTan's Cozy ${missionToUse}
+
+${storyStarter}, Mila TanTan put on her favorite cozy sweater and peeked outside at the ${placeToUse}. She loved exploring with a bright smile and kind heart.
+
+Her mission was ${missionToUse.toLowerCase()}, and she remembered to practice ${teachingPoint} to help everyone feel good inside.
+
+===CHOICE POINT===
+Should Mila ask a friend to join, or start by drawing a simple plan with shapes?
+===END CHOICE POINT===
+
+===OPTION A OUTCOME===
+Mila invited a friend. Together they took turns and shared tools. "Please" and "thank you" made the work sparkle.
+===END OPTION A OUTCOME===
+
+===OPTION B OUTCOME===
+Mila drew a plan using a circle, a square, and a triangle. The shapes helped her take each step in order.
+===END OPTION B OUTCOME===
+
+Mila completed the ${missionToUse.toLowerCase()} and gave a proud little wave. She felt warm and peaceful.
+
+${ending}
+
+The end. Would you like to go on another adventure with Mila? Or are you ready to join Mila in Dreamland?`;
+  } else if (heroName.includes('liam')) {
+    storyTemplate = `# Liam's Brave Day in the ${placeToUse}
+
+${storyStarter}, Liam zipped up his bright jacket and took a deep breath. Today’s mission was ${missionToUse.toLowerCase()}.
+
+He practiced ${educationalElement} while he walked and used ${teachingPoint} to make good choices.
+
+===CHOICE POINT===
+Should Liam follow the friendly puppy’s wagging tail, or look for painted arrows along the path?
+===END CHOICE POINT===
+
+===OPTION A OUTCOME===
+Liam followed the puppy, counting steps—one, two, three, four, five—until they reached a big helpful sign.
+===END OPTION A OUTCOME===
+
+===OPTION B OUTCOME===
+Liam found colorful arrows: red, blue, yellow. He followed them carefully, feeling calm and confident.
+===END OPTION B OUTCOME===
+
+With patience and courage, he finished the ${missionToUse.toLowerCase()} and cheered softly, "I did it!"
+
+${ending}
+
+The end. Would you like to go on another adventure with Liam? Or are you ready to join Liam in Dreamland?`;
+  } else if (heroName.includes('garyn')) {
+    storyTemplate = `# Garyn and the Gentle ${missionToUse}
+
+${storyStarter}, Garyn found a cozy path in the ${placeToUse}. He liked to notice small details: the soft wind, the bright colors, and the shapes of leaves.
+
+Garyn’s mission was ${missionToUse.toLowerCase()}, and he remembered to practice ${teachingPoint} to turn hard moments into calm ones.
+
+===CHOICE POINT===
+Should Garyn try the quiet route by the stream, or the sunny route past the meadow?
+===END CHOICE POINT===
+
+===OPTION A OUTCOME===
+By the stream, Garyn listened to tiny splashes and counted three frogs hopping in a row.
+===END OPTION A OUTCOME===
+
+===OPTION B OUTCOME===
+In the sunny meadow, Garyn spotted a circle, a square, and a triangle in the clouds, guiding him forward.
+===END OPTION B OUTCOME===
+
+With a peaceful smile, Garyn completed the ${missionToUse.toLowerCase()} and waved to the fluttering butterflies.
+
+${ending}
+
+The end. Would you like to go on another adventure with Garyn? Or are you ready to join Garyn in Dreamland?`;
+  } else if (heroName.includes('bop') || heroName.includes('bop-bop') || heroName.includes('bunny') || heroName.includes('rabbit')) {
+    storyTemplate = `# Bop-Bop's Beat and the ${missionToUse}
+
+${storyStarter}, Bop-Bop the Beat Bunny bounced into the ${placeToUse}. Every hop made a tiny drum sound: bop, bop, bop!
+
+Today’s mission was ${missionToUse.toLowerCase()}. Bop-Bop clapped a rhythm and remembered to practice ${teachingPoint} with every step.
+
+===CHOICE POINT===
+Should Bop-Bop follow the tapping sound in the trees, or lay down a slow beat to listen for echoes?
+===END CHOICE POINT===
+
+===OPTION A OUTCOME===
+Bop-Bop followed the taps—one, two, three, four, five—and found a friendly woodpecker pointing the way with a beak salute.
+===END OPTION A OUTCOME===
+
+===OPTION B OUTCOME===
+Bop-Bop made a slow beat: boom, tap, boom, tap. The echoes formed a triangle, then a square, guiding him forward.
+===END OPTION B OUTCOME===
+
+With a joyful hop, he finished the ${missionToUse.toLowerCase()} and shouted, "Let’s hop to the top!"
+
+${ending}
+
+The end. Would you like to go on another adventure with Bop-Bop? Or are you ready to join Bop-Bop in Dreamland?`;
+  } else if (heroName.includes('puffy') || heroName.includes('cloud') || heroName.includes('pup') || heroName.includes('dog')) {
+    storyTemplate = `# Puffy's Soft ${missionToUse}
+
+${storyStarter}, Puffy the Fluffy Cloud Pup drifted into the ${placeToUse}. He was shy, but very, very fluffy.
+
+Puffy’s mission was ${missionToUse.toLowerCase()}, and he practiced ${teachingPoint} by taking gentle, floaty breaths.
+
+===CHOICE POINT===
+Should Puffy follow a string of tiny stars, or ask the breezy wind for two whispery hints?
+===END CHOICE POINT===
+
+===OPTION A OUTCOME===
+Puffy followed the tiny stars. He counted softly—one, two, three, four, five—until the stars formed an arrow pointing ahead.
+===END OPTION A OUTCOME===
+
+===OPTION B OUTCOME===
+The wind whispered, "Look for the circle cloud, then the triangle cloud." Puffy smiled and floated along the shapes.
+===END OPTION B OUTCOME===
+
+Soon he finished the ${missionToUse.toLowerCase()} and wagged his soft, cloud-like tail.
+
+${ending}
+
+The end. Would you like to go on another adventure with Puffy? Or are you ready to join Puffy in Dreamland?`;
+  }
+
+  // Generic hero fallback aligned to chosen options
   if (!storyTemplate) {
-    storyTemplate = `# Sparkles the Unicorn's Magical Journey
+    const genericHero = hero || 'Our Friend';
+    storyTemplate = `# ${genericHero}'s ${missionToUse}
 
-${storyStarter}, a unicorn named Sparkles was prancing through a field of flowers. As the sunlight touched her mane, it seemed to change from purple to pink to blue—shifting colors like a rainbow.
+${storyStarter}, ${genericHero} set out through the ${placeToUse}. With a calm smile, they practiced ${teachingPoint} and noticed ${educationalElement} along the way.
 
-... (keep your Sparkles template exactly as before) ...
-`;
+===CHOICE POINT===
+Should they follow the colorful path, or ask a kind guide for two clues?
+===END CHOICE POINT===
+
+===OPTION A OUTCOME===
+The colorful path showed red, blue, and yellow markers forming simple shapes that led the way.
+===END OPTION A OUTCOME===
+
+===OPTION B OUTCOME===
+The kind guide shared two gentle hints: "Count to five" and "Look for the triangle sign." Step by step, it worked.
+===END OPTION B OUTCOME===
+
+With patience and care, ${genericHero} completed the ${missionToUse.toLowerCase()} and felt proud inside.
+
+${ending}
+
+The end. Would you like to go on another adventure with ${genericHero}? Or are you ready to join ${genericHero} in Dreamland?`;
   }
 
   return storyTemplate;

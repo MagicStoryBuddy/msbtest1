@@ -99,7 +99,8 @@ export default function SavedStoriesDrawer({ isOpen, onClose, onLoadStory }: Sav
       "Mila TanTan": "👶",
       "Liam": "👦",
       "Garyn": "👶🏼",
-      "Futa": "👦🏻"
+      "Bop-Bop": "🐰",
+      "Puffy": "☁️"
     };
     
     return (heroes as Record<string, string>)[heroName] || "📖";
